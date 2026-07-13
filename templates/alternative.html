@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ALTERNATIVE — 進捗トラッカー</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0d1a2e 100%);
+            color: #e0e0f0;
+            min-height: 100vh;
+            margin: 0;
+            padding: 30px 20px;
+        }
+        .title {
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 4px;
+            color: #8b7bff;
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 6px;
+        }
+        .subtitle { text-align: center; color: #9a90c8; margin-bottom: 30px; }
+        nav { text-align: center; margin-bottom: 20px; }
+        nav a { color: #8b7bff; margin: 0 10px; text-decoration: none; }
+
+        /* ===== 1枚ぶんのカード ===== */
+        .art-card {
+            max-width: 620px;
+            margin: 0 auto;
+            background: rgba(107, 45, 125, 0.18);
+            border: 2px solid rgba(139, 123, 255, 0.35);
+            border-radius: 14px;
+            padding: 22px;
+        }
+        .art-card h2 { color: #d7c5ff; margin: 0 0 12px; }
+
+        /* ===== タグ(バッジ) ===== */
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+        .tag {
+            background: rgba(139, 123, 255, 0.15);
+            color: #b8a9ff;
+            border: 1px solid rgba(139, 123, 255, 0.4);
+            border-radius: 999px;
+            padding: 3px 12px;
+            font-size: 0.82em;
+        }
+
+        /* ===== pixivボタン ===== */
+        .pixiv-link {
+            display: inline-block;
+            background: #0096fa;
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 18px;
+        }
+        .pixiv-link:hover { background: #33abff; }
+
+        /* ===== 5段階タブ ===== */
+        .tab-btn { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+        .tab-link {
+            flex: 1 1 auto;
+            text-align: center;
+            font-size: 0.9em;
+            padding: 8px 6px;
+            background: #4a3a6b;
+            color: #d7b5ff;
+            border: 1px solid #8b7bff;
+            border-radius: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .tab-link.is-active { background: #8b7bff; color: #16102e; font-weight: bold; }
+
+        /* ===== パネル(段階ごとの中身)===== */
+        .panel { display: none; }
+        .panel.is-active { display: block; }
+        .panel img { width: 100%; border-radius: 10px; display: block; }
+
+        /* まだ描いてない段階のプレースホルダ */
+        .todo {
+            border: 2px dashed rgba(139, 123, 255, 0.4);
+            border-radius: 10px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #8a80b0;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">ホーム</a>
+        <a href="/gallery">ギャラリー</a>
+        <a href="/works">作品紹介</a>
+        <a href="/alternative">ALTERNATIVE</a>
+    </nav>
+
+    <div class="title">ALTERNATIVE</div>
+    <p class="subtitle">積み重ねて、より良い自分へ ── 進捗トラッカー</p>
+
+    <div class="art-card">
+        <h2>強化装備の少女</h2>
+
+        <!-- タグ(あとで自由に増やす) -->
+        <div class="tags">
+            <span class="tag">Muv-Luv</span>
+            <span class="tag">強化装備</span>
+            <span class="tag">あおり構図</span>
+        </div>
+
+        <!-- pixivリンク(あとで本物のURLに差し替え) -->
+        <a class="pixiv-link" href="#" target="_blank">pixivで見る</a>
+
+        <!-- 5段階タブ -->
+        <div class="tab-btn">
+            <div class="tab-link">ラフ</div>
+            <div class="tab-link is-active">線画</div>
+            <div class="tab-link">ライティング</div>
+            <div class="tab-link">色</div>
+            <div class="tab-link">仕上げ</div>
+        </div>
+
+        <!-- パネル5枚(タブと同じ順番・同じ数にする) -->
+        <div class="panel">
+            <div class="todo">ラフはこの絵にはまだ無いぜ</div>
+        </div>
+        <div class="panel is-active">
+            <img src="/static/images/イラスト3.png" alt="線画">
+        </div>
+        <div class="panel">
+            <div class="todo">ライティングはこれから</div>
+        </div>
+        <div class="panel">
+            <div class="todo">色はこれから</div>
+        </div>
+        <div class="panel">
+            <div class="todo">仕上げはこれから</div>
+        </div>
+    </div>
+
+    <script>
+        // /works で作ったのと同じ仕組み:押した番号だけ is-active にする
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const panels = document.querySelectorAll('.panel');
+
+        tabLinks.forEach(function (link, i) {   // i = 何番目のタブか
+            link.addEventListener('click', function () {
+                // (a) 全部リセット
+                tabLinks.forEach(function (l) { l.classList.remove('is-active'); });
+                panels.forEach(function (p) { p.classList.remove('is-active'); });
+                // (b) 押したタブと同じ番号のパネルをオン
+                link.classList.add('is-active');
+                panels[i].classList.add('is-active');
+            });
+        });
+    </script>
+</body>
+</html>

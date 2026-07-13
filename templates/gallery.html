@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>俺のイラストギャラリー</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 40px 20px;
+        }
+        h1 { color: #8b7bff; }
+        nav { margin-bottom: 20px; }
+        nav a { color: #8b7bff; margin: 0 10px; text-decoration: none; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 30px auto;
+        }
+        .card {
+            background: #16213e;
+            border-radius: 10px;
+            padding: 12px;
+        }
+        .card img {
+            width: 100%;
+            border-radius: 6px;
+            display: block;
+            cursor: pointer;                 /* クリックできる合図 */
+            transition: transform .15s;
+        }
+        .card img:hover { transform: scale(1.03); }  /* ホバーで少し拡大 */
+        .card p { margin: 10px 0 4px; color: #ccc; }
+
+        /* ===== ライトボックス(クリック拡大表示)===== */
+        #lightbox {
+            display: none;                   /* ① 最初は隠しておく */
+            position: fixed;                 /* 画面に貼り付け */
+            inset: 0;                        /* 上下左右0 = 全画面を覆う */
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            cursor: zoom-out;
+            z-index: 100;                    /* 一番手前に */
+        }
+        #lightbox.open { display: flex; }    /* ② openクラスが付いたら表示 */
+        #lightbox img { max-width: 90%; max-height: 90%; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">ホーム</a>
+        <a href="/gallery">ギャラリー</a>
+        <a href="/works">作品紹介</a>
+    </nav>
+
+    <h1>俺のイラストギャラリー</h1>
+    <p style="color:#888;">画像をクリックで拡大表示</p>
+
+    <div class="grid">
+        <div class="card">
+            <img src="/static/images/イラスト3.png" alt="サンプル作品" onclick="openLightbox(this)">
+            <p>サンプル作品</p>
+        </div>
+        <div class="card">
+            <img src="/static/images/イラスト160.png" alt="サンプル作品2" onclick="openLightbox(this)">
+            <p>サンプル作品2</p>
+        </div>
+    </div>
+
+    <!-- 拡大表示用の箱。中の画像はJSで差し替える -->
+    <div id="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="拡大画像">
+    </div>
+
+    <script>
+        // 画像がクリックされたら実行:拡大表示を開く
+        function openLightbox(img) {
+            const box = document.getElementById("lightbox");      // 拡大用の箱
+            const bigImg = document.getElementById("lightbox-img"); // その中の画像
+            bigImg.src = img.src;        // クリックされた画像を大きい枠にセット
+            box.classList.add("open");   // openクラスを付けて表示する
+        }
+        // 拡大表示を閉じる(背景クリックで呼ばれる)
+        function closeLightbox() {
+            document.getElementById("lightbox").classList.remove("open");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>作品紹介</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        h1 { color: #8b7bff; }
+        nav { margin-bottom: 20px; }
+        nav a { color: #8b7bff; margin: 0 10px; text-decoration: none; }
+
+        /* ===== タブのボタン ===== */
+        .tabs { display: flex; justify-content: center; gap: 8px; margin: 24px 0; flex-wrap: wrap; }
+        .tab {
+            font-size: 1em;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            background: #16213e;
+            color: #ccc;
+            cursor: pointer;
+        }
+        .tab.active { background: #8b7bff; color: #1a1a2e; font-weight: bold; }  /* 選択中のタブ */
+
+        /* ===== 中身のパネル(絵と文章を上下に)===== */
+        .panel { display: none; max-width: 520px; margin: 0 auto; }  /* 普段は隠す */
+        .panel.active { display: block; }                            /* activeなパネルだけ表示 */
+        .panel img { width: 100%; border-radius: 10px; }
+        .panel .text { margin-top: 16px; color: #ddd; line-height: 1.8; text-align: left; }
+        .panel h2 { color: #8b7bff; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">ホーム</a>
+        <a href="/gallery">ギャラリー</a>
+        <a href="/works">作品紹介</a>
+    </nav>
+
+    <h1>作品紹介</h1>
+
+    <!-- タブのボタン。押すと showTab(番号) が呼ばれる -->
+    <div class="tabs">
+        <button class="tab active" onclick="showTab(0)">作品1</button>
+        <button class="tab" onclick="showTab(1)">作品2</button>
+    </div>
+
+    <!-- パネル0(最初から表示) -->
+    <div class="panel active">
+        <img src="/static/images/イラスト3.png" alt="作品1">
+        <div class="text">
+            <h2>強化装備の少女</h2>
+            <p>ここに作品の説明を書く。マブラヴの強化装備を着たキャラを、あおり構図で睨ませた一枚。今は線画〜ライティング練習中。</p>
+        </div>
+    </div>
+
+    <!-- パネル1(最初は隠れてる) -->
+    <div class="panel">
+        <img src="/static/images/イラスト160.png" alt="作品2">
+        <div class="text">
+            <h2>ウインクの少女</h2>
+            <p>ここに作品の説明を書く。柔らかい表情でウインクする、あったかい空気の一枚。</p>
+        </div>
+    </div>
+
+    <script>
+        // タブが押されたら実行:全部を一旦オフにして、選ばれた番号だけオンにする
+        function showTab(index) {
+            const tabs = document.querySelectorAll(".tab");     // タブ全部
+            const panels = document.querySelectorAll(".panel"); // パネル全部
+            // いったん全部から active を外す
+            tabs.forEach(t => t.classList.remove("active"));
+            panels.forEach(p => p.classList.remove("active"));
+            // 選ばれた番号だけ active を付ける
+            tabs[index].classList.add("active");
+            panels[index].classList.add("active");
+        }
+    </script>
+</body>
+</html>
