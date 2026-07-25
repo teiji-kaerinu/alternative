@@ -57,6 +57,11 @@ def works():
 def alternative():
     return render_template("alternative.html")
 
+# 「/study」: 資格(FE)の週間プログレス。localStorageでチェック状態を保存
+@app.route("/study")
+def study():
+    return render_template("study.html")
+
 # このファイルを直接実行したらサーバーを起動する
 if __name__ == "__main__":
     app.run(debug=True)

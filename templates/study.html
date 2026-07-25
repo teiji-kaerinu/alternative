@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FE 週間プログレス</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 30px 20px;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+        h1 { color: #8b7bff; text-align: center; }
+        .subtitle { text-align: center; color: #9a90c8; margin-bottom: 24px; }
+        nav { text-align: center; margin-bottom: 20px; }
+        nav a { color: #8b7bff; margin: 0 10px; text-decoration: none; }
+
+        /* 週ごとのブロック */
+        .week {
+            background: #16213e;
+            border: 1px solid rgba(139,123,255,0.3);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 18px;
+        }
+        .week h2 { color: #d7c5ff; font-size: 1.1em; margin: 0 0 12px; }
+
+        /* 1つのタスク(チェックボックス+ラベル) */
+        .task { display: flex; align-items: center; gap: 12px; margin: 10px 0; }
+        .task input {
+            width: 22px; height: 22px;
+            accent-color: #8b7bff;   /* チェックの色を紫に */
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .task label { cursor: pointer; }
+        /* チェック済みのラベルは薄く・取り消し線 */
+        .task input:checked + label { color: #7a72a0; text-decoration: line-through; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">ホーム</a>
+        <a href="/alternative">ALTERNATIVE</a>
+        <a href="/study">FE進捗</a>
+    </nav>
+
+    <h1>基本情報 週間プログレス</h1>
+    <p class="subtitle">「今週やること」をチェック。閉じても消えないぜ。</p>
+
+    <!-- 第1週 -->
+    <div class="week">
+        <h2>第1週</h2>
+        <div class="task">
+            <input type="checkbox" id="fe-w1-1">
+            <label for="fe-w1-1">テキスト 第1章を読む</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="fe-w1-2">
+            <label for="fe-w1-2">過去問道場 10問</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="fe-w1-3">
+            <label for="fe-w1-3">用語カード 20枚</label>
+        </div>
+    </div>
+
+    <!-- 第2週 -->
+    <div class="week">
+        <h2>第2週</h2>
+        <div class="task">
+            <input type="checkbox" id="fe-w2-1">
+            <label for="fe-w2-1">テキスト 第2章を読む</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="fe-w2-2">
+            <label for="fe-w2-2">過去問 10問</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="fe-w2-3">
+            <label for="fe-w2-3">アルゴリズム問題 5問</label>
+        </div>
+    </div>
+
+    <!-- 第3週 -->
+    <div class="week">
+        <h2>第3週</h2>
+        <div class="task">
+            <input type="checkbox" id="fe-w3-1">
+            <label for="fe-w3-1">テキスト 第3章を読む</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="fe-w3-2">
+            <label for="fe-w3-2">過去問 10問</label>
+        </div>
+        <div class="task">
+            <input type="checkbox" id="fe-w3-3">
+            <label for="fe-w3-3">苦手分野の復習</label>
+        </div>
+    </div>
+
+    <script>
+        // ページ内の全チェックボックスを集める
+        const boxes = document.querySelectorAll('.task input[type="checkbox"]');
+
+        // boxesを1回だけ回して、「復元」と「保存の準備」を両方やる(ループ融合)
+        boxes.forEach(function (box) {
+            // 【復元】保存値が "true" ならチェックを付ける
+            if (localStorage.getItem(box.id) === "true") {
+                box.checked = true;
+            }
+            // 【保存】チェックが変わったら、今の状態を保存する
+            box.addEventListener('change', function () {
+                localStorage.setItem(box.id, box.checked);
+            });
+        });
+    </script>
+</body>
+</html>
