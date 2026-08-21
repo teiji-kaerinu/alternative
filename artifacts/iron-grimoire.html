@@ -1,0 +1,876 @@
+<title>鉄塊を喰らう者</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&family=Noto+Sans+JP:wght@400;500;700&family=Oswald:wght@300;500;700&display=swap">
+
+<style>
+  /* ============================================================
+     鉄の魔導書 — 単一テーマ（鍛冶炉の闇）に意図的にコミット。
+     すべての色を明示指定し、ホストの地色を借りない。
+     ============================================================ */
+  :root {
+    --void:      #0A0809;
+    --void-2:    #15100F;
+    --veil:      rgba(32, 22, 20, 0.68);
+    --slab:      rgba(22, 15, 14, 0.62);
+    --edge:      rgba(255, 107, 44, 0.34);
+    --edge-dim:  rgba(255, 107, 44, 0.13);
+    --ember:     #FF6B2C;
+    --ember-d:   #A33A0E;
+    --blood:     #E23A4E;
+    --blood-d:   #7A1626;
+    --steel:     #7FA6C9;
+    --steel-d:   #2F4A63;
+    --gold:      #E8B93F;
+    --ash:       #EDE5DA;
+    --ash-dim:   #A79A8C;
+    --ash-far:   #6B6055;
+    --joke:      #7A7168;
+
+    --mincho: "Noto Serif JP", "Yu Mincho", serif;
+    --gothic: "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+    --stencil: "Oswald", "Arial Narrow", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--void);
+    color: var(--ash);
+    font-family: var(--gothic);
+    font-size: 15px;
+    line-height: 2;
+    background-image:
+      radial-gradient(ellipse 78% 52% at 50% -8%,  rgba(255,107,44,.22), transparent 70%),
+      radial-gradient(ellipse 58% 42% at 6% 48%,   rgba(226,58,78,.10),  transparent 66%),
+      radial-gradient(ellipse 56% 40% at 94% 86%,  rgba(127,166,201,.10), transparent 64%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 880px; margin: 0 auto; padding: 56px 20px 88px; display: flex; flex-direction: column; }
+
+  /* ══ ※ツッコミ ══ */
+  .tk {
+    display: block;
+    font-family: var(--gothic);
+    font-size: 11.5px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: var(--joke);
+    letter-spacing: 0;
+    margin-top: 4px;
+  }
+  .tk::before { content: "※ "; }
+
+  /* ══ 表紙 ══ */
+  .cover { text-align: center; margin-bottom: 58px; }
+
+  .kicker {
+    font-family: var(--stencil);
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--ember-d);
+    margin: 0 0 24px;
+  }
+
+  h1 {
+    font-family: var(--mincho);
+    font-weight: 900;
+    font-size: clamp(20px, 3.9vw, 31px);
+    line-height: 1.66;
+    margin: 0 0 18px;
+    text-wrap: balance;
+    color: var(--ash);
+    text-shadow: 0 0 38px rgba(255,107,44,.34);
+  }
+  h1 .hi { color: var(--blood); }
+  h1 .gd { color: var(--gold); }
+
+  .cover .sub {
+    font-family: var(--mincho);
+    font-size: clamp(12px, 2vw, 15px);
+    color: var(--ember);
+    margin: 0;
+    letter-spacing: 0.04em;
+  }
+
+  .anvil {
+    width: 96px; height: 96px;
+    margin: 30px auto 26px;
+    border: 1px solid var(--edge);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    position: relative;
+    box-shadow: 0 0 42px rgba(255,107,44,.26), inset 0 0 32px rgba(255,107,44,.12);
+  }
+  .anvil::before {
+    content: "";
+    position: absolute; inset: 11px;
+    border: 1px solid var(--edge-dim);
+    border-radius: 50%;
+  }
+  .anvil span {
+    font-family: var(--mincho);
+    font-weight: 900;
+    font-size: 30px;
+    color: var(--ember);
+    text-shadow: 0 0 22px rgba(255,107,44,.75);
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--edge), transparent);
+    margin: 32px 0;
+  }
+
+  .prologue {
+    font-family: var(--mincho);
+    font-size: 15.5px;
+    line-height: 2.4;
+    color: var(--ash-dim);
+    text-align: left;
+    max-width: 60ch;
+    margin: 0 auto;
+  }
+  .prologue b { color: var(--ash); font-weight: 600; }
+  .prologue .em { color: var(--ember); font-weight: 600; }
+
+  /* ══ 石板ウィンドウ ══ */
+  .window {
+    position: relative;
+    background: var(--veil);
+    border: 1px solid var(--edge);
+    box-shadow: 0 0 44px rgba(163,58,14,.16), inset 0 0 60px rgba(255,107,44,.04);
+    margin-bottom: 32px;
+  }
+  .window::before {
+    content: "";
+    position: absolute; inset: 3px;
+    border: 1px solid var(--edge-dim);
+    pointer-events: none;
+  }
+
+  .w-head {
+    padding: 13px 22px;
+    border-bottom: 1px solid var(--edge);
+    background: linear-gradient(90deg, rgba(163,58,14,.30), transparent 80%);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; flex-wrap: wrap;
+  }
+
+  .w-title {
+    font-family: var(--mincho);
+    font-weight: 700; font-size: 16px;
+    letter-spacing: 0.14em;
+    color: var(--ember);
+    text-shadow: 0 0 18px rgba(255,107,44,.5);
+  }
+
+  .w-tag {
+    font-family: var(--stencil);
+    font-weight: 300;
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ash-far);
+  }
+
+  .w-body { padding: 22px 24px 24px; }
+
+  /* ══ パラメータ ══ */
+  .params { display: grid; gap: 15px; }
+  .param { display: grid; grid-template-columns: 148px 1fr auto; gap: 14px; align-items: center; }
+
+  .p-name {
+    font-family: var(--mincho);
+    font-weight: 600; font-size: 14.5px;
+    letter-spacing: 0.05em;
+    color: var(--ash-dim);
+  }
+
+  .bar { height: 11px; border: 1px solid var(--edge-dim); background: rgba(0,0,0,.5); }
+  .bar i { display: block; height: 100%; }
+  .b-low { background: linear-gradient(90deg, var(--blood-d), var(--blood)); }
+  .b-mid { background: linear-gradient(90deg, var(--ember-d), var(--ember)); }
+  .b-max { background: linear-gradient(90deg, #9A7620, var(--gold)); }
+
+  .p-val {
+    font-family: var(--stencil);
+    font-weight: 500;
+    font-size: 13px; letter-spacing: .08em;
+    color: var(--ash-dim);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .p-val.dead { color: var(--blood); }
+  .p-val.top  { color: var(--gold); text-shadow: 0 0 14px rgba(232,185,63,.45); }
+
+  /* ══ 一覧系 ══ */
+  .list { display: grid; gap: 14px; }
+
+  .item { border-bottom: 1px solid rgba(255,107,44,.11); padding-bottom: 12px; }
+  .item:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .i-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+
+  .i-name {
+    font-family: var(--mincho);
+    font-weight: 700; font-size: 15.5px;
+    letter-spacing: 0.03em;
+    color: var(--gold);
+    text-shadow: 0 0 16px rgba(232,185,63,.28);
+  }
+  .i-name.dim { color: var(--ash-far); text-shadow: none; }
+
+  .i-rank {
+    font-family: var(--stencil);
+    font-weight: 500;
+    font-size: 10.5px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ember);
+    white-space: nowrap;
+  }
+  .i-rank.no { color: var(--ash-far); }
+
+  .i-desc { font-size: 13.5px; line-height: 1.9; color: var(--ash-dim); margin: 2px 0 0; }
+  .i-desc b { color: var(--ash); font-weight: 700; }
+
+  /* ══ 章（儀式の日） ══ */
+  .chapter { margin-bottom: 40px; }
+
+  .ch-label {
+    font-family: var(--stencil);
+    font-weight: 500;
+    font-size: 10px; letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--ember-d); margin: 0 0 7px;
+  }
+
+  .ch-title {
+    font-family: var(--mincho);
+    font-weight: 700;
+    font-size: clamp(17px, 3vw, 23px);
+    line-height: 1.55;
+    margin: 0 0 5px;
+    text-wrap: balance;
+    color: var(--ash);
+  }
+
+  .ch-when {
+    font-family: var(--stencil);
+    font-weight: 300;
+    font-size: 10.5px; letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ember-d); margin: 0 0 15px;
+  }
+
+  .ch-lead {
+    font-family: var(--mincho);
+    color: var(--ash-dim);
+    font-size: 14.5px; line-height: 2.2;
+    margin: 0 0 20px;
+    padding-left: 15px;
+    border-left: 2px solid var(--edge-dim);
+  }
+  .ch-lead b { color: var(--ash); font-weight: 600; }
+
+  /* ══ 種目スラブ ══ */
+  .rites { display: grid; gap: 14px; }
+
+  .rite {
+    background: var(--slab);
+    border: 1px solid rgba(255,107,44,.16);
+    border-left: 3px solid var(--ember-d);
+    padding: 14px 17px 15px;
+  }
+  .rite.aux { border-left-color: var(--steel-d); }
+
+  .rite-h {
+    display: grid;
+    grid-template-columns: 34px 1fr auto;
+    align-items: center;
+    gap: 13px;
+  }
+
+  .ord {
+    font-family: var(--mincho);
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 1;
+    text-align: center;
+    color: var(--ember);
+  }
+  .rite.aux .ord { color: var(--steel); font-size: 16px; }
+
+  .rite-n { min-width: 0; }
+  .rite-n b {
+    display: block;
+    font-family: var(--mincho);
+    font-weight: 700; font-size: 15.5px;
+    line-height: 1.4;
+    color: var(--gold);
+    letter-spacing: 0.03em;
+  }
+  .rite.aux .rite-n b { color: var(--steel); }
+  .rite-n span {
+    display: block;
+    font-family: var(--stencil);
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ash-far);
+    line-height: 1.6;
+  }
+
+  .dose {
+    font-family: var(--stencil);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+  .dose .n { font-size: 22px; font-weight: 700; color: var(--ash); letter-spacing: .02em; }
+  .dose .x { display: block; font-size: 10.5px; font-weight: 300; letter-spacing: .14em; text-transform: uppercase; color: var(--ash-far); }
+
+  /* 刻印（セット） */
+  .runes { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0 0 47px; }
+  .rune {
+    appearance: none;
+    width: 46px; height: 32px;
+    border: 1px solid rgba(255,107,44,.3);
+    background: rgba(0,0,0,.42);
+    color: var(--ash-far);
+    font-family: var(--stencil);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: .1em;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .rune:hover { border-color: var(--ember); color: var(--ash-dim); }
+  .rune[aria-pressed="true"] {
+    background: linear-gradient(180deg, var(--ember), var(--ember-d));
+    border-color: var(--ember);
+    color: #170B05;
+    font-weight: 700;
+    box-shadow: 0 0 16px rgba(255,107,44,.42);
+  }
+  .rune:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .runes .label {
+    font-family: var(--stencil);
+    font-weight: 300;
+    font-size: 10.5px; letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ash-far);
+  }
+
+  .cues { margin: 12px 0 0 47px; padding: 0; display: grid; gap: 6px; }
+  .cues li {
+    list-style: none;
+    position: relative;
+    padding-left: 15px;
+    font-size: 13.5px;
+    line-height: 1.85;
+    color: var(--ash-dim);
+  }
+  .cues li::before {
+    content: "";
+    position: absolute; left: 0; top: .82em;
+    width: 8px; height: 1px;
+    background: var(--ember);
+  }
+  .cues li.warn { color: var(--blood); font-weight: 500; }
+  .cues li.warn::before { background: var(--blood); }
+  .cues li.note { padding-left: 0; }
+  .cues li.note::before { content: none; }
+  .cues li.note .tk { margin-top: 0; }
+
+  /* ══ 凶兆 ══ */
+  .omen {
+    border: 1px solid rgba(226,58,78,.42);
+    background: linear-gradient(180deg, rgba(90,14,30,.36), rgba(12,6,7,.55));
+    padding: 19px 22px; margin-bottom: 32px;
+  }
+  .omen .t {
+    font-family: var(--mincho); font-weight: 700; font-size: 16px;
+    color: var(--blood); letter-spacing: 0.08em; margin-bottom: 8px;
+    text-shadow: 0 0 20px rgba(226,58,78,.4);
+  }
+  .omen p { margin: 0 0 10px; font-size: 13.5px; color: var(--ash-dim); line-height: 1.95; }
+  .omen p:last-child { margin-bottom: 0; }
+  .omen b { color: var(--ash); }
+  .omen ol { margin: 0 0 12px; padding-left: 22px; }
+  .omen ol li {
+    font-size: 13.5px; line-height: 1.95; color: var(--ash-dim);
+    font-family: var(--mincho); font-weight: 600;
+  }
+  .omen ol li::marker { color: var(--blood); font-family: var(--stencil); font-weight: 700; }
+
+  /* ══ 掟（2列） ══ */
+  .laws { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  @media (min-width: 660px) { .laws { grid-template-columns: 1fr 1fr; } }
+
+  .law {
+    background: var(--slab);
+    border: 1px solid rgba(255,107,44,.16);
+    padding: 16px 18px 18px;
+    display: flex; flex-direction: column; gap: 9px;
+  }
+  .law h3 {
+    margin: 0;
+    font-family: var(--mincho);
+    font-weight: 700; font-size: 15.5px;
+    color: var(--gold);
+    letter-spacing: .05em;
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  }
+  .law h3 em {
+    font-family: var(--stencil); font-style: normal; font-weight: 300;
+    font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--ash-far);
+  }
+  .law p { margin: 0; font-size: 13.5px; line-height: 1.9; color: var(--ash-dim); }
+  .law p b { color: var(--ash); font-weight: 700; }
+  .big {
+    font-family: var(--stencil);
+    font-variant-numeric: tabular-nums;
+    font-size: 27px; font-weight: 700;
+    color: var(--ember);
+    letter-spacing: .01em;
+    line-height: 1.2;
+  }
+  .big small { font-size: 13px; color: var(--ash-far); font-weight: 300; letter-spacing: .06em; }
+
+  /* ══ 封印 ══ */
+  .seal-row { display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; }
+  .seal-row::before {
+    content: "封";
+    font-family: var(--mincho); font-weight: 700; font-size: 12px;
+    color: var(--blood); border: 1px solid var(--blood);
+    width: 24px; height: 24px; display: grid; place-items: center;
+    margin-top: 4px; opacity: .82;
+  }
+  .seal-row b {
+    font-family: var(--mincho); font-size: 14.5px; font-weight: 600;
+    color: var(--ash-dim);
+    text-decoration: line-through;
+    text-decoration-color: rgba(226,58,78,.55);
+  }
+
+  /* ══ 終章 ══ */
+  .finale {
+    border-top: 1px solid var(--edge);
+    border-bottom: 1px solid var(--edge);
+    padding: 44px 24px; text-align: center; margin-top: 46px;
+    background: radial-gradient(ellipse at center, rgba(163,58,14,.18), transparent 74%);
+  }
+  .finale .t {
+    font-family: var(--mincho); font-weight: 900;
+    font-size: clamp(18px, 3.4vw, 26px);
+    color: var(--gold); margin-bottom: 20px; letter-spacing: 0.04em;
+    text-shadow: 0 0 32px rgba(232,185,63,.32);
+  }
+  .finale p {
+    font-family: var(--mincho);
+    max-width: 54ch; margin: 0 auto 14px;
+    font-size: 14.5px; line-height: 2.3; color: var(--ash-dim);
+  }
+  .finale p b { color: var(--ash); font-weight: 600; }
+  .finale .last {
+    color: var(--ember); font-weight: 700;
+    font-size: clamp(15px, 2.9vw, 20px);
+    letter-spacing: 0.09em; margin-top: 24px;
+  }
+
+  /* ══ 足元 ══ */
+  .foot-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 14px; flex-wrap: wrap; margin-top: 30px;
+    border-top: 1px solid rgba(255,107,44,.16); padding-top: 16px;
+  }
+  .foot-bar p { margin: 0; font-size: 12.5px; color: var(--ash-far); }
+  .reset {
+    appearance: none;
+    background: transparent;
+    border: 1px solid rgba(255,107,44,.34);
+    color: var(--ash-dim);
+    font-family: var(--stencil);
+    font-weight: 500;
+    font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
+    padding: 9px 15px; cursor: pointer;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  .reset:hover { border-color: var(--ember); color: var(--ember); }
+  .reset:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  footer {
+    margin-top: 34px; text-align: center;
+    font-family: var(--stencil); font-weight: 300;
+    font-size: 10px; letter-spacing: .26em; text-transform: uppercase;
+    color: var(--ash-far); line-height: 2.4;
+  }
+
+  @media (max-width: 620px) {
+    .w-body { padding: 17px 15px 19px; }
+    .param { grid-template-columns: 118px 1fr auto; gap: 9px; }
+    .p-name { font-size: 13px; }
+    .rite-h { grid-template-columns: 26px 1fr auto; gap: 10px; }
+    .runes, .cues { margin-left: 0; }
+    .dose .n { font-size: 19px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap">
+
+<!-- ══ 表紙 ══ -->
+<div class="cover">
+  <p class="kicker">Grimoire of the Iron Devourer</p>
+  <h1>ガリガリと蔑まれし俺の<span class="gd">【筋繊維】</span>が週2で覚醒し、<br>一年後には<span class="hi">「ガタイいいね」</span>と言われるまでの記録</h1>
+  <p class="sub">～ただし修行は水曜と土曜だけ。それ以外の日は普通に寝ます～</p>
+
+  <div class="anvil"><span>鉄</span></div>
+
+  <div class="divider"></div>
+
+  <p class="prologue">
+    ——現在、身長165cm、体重55〜59kg。<br>
+    世間は彼をこう呼んだ。<b>「細いね」</b>と。<span class="tk">褒め言葉ではない</span><br><br>
+    だが彼は知ってしまった。<span class="em">週に二度、鉄塊を持ち上げるだけで肉体は書き換わる</span>という理を。
+    毎日通う必要はない。限界まで追い込む必要もない。<b>ただ、水曜と土曜に現れること。</b>それだけで世界の側が折れる。<span class="tk">実際は「行けば勝ち」と言い聞かせているだけ</span><br><br>
+    上級者は言うだろう。「その重量では効かない」と。<br>
+    ——だが彼には関係ない。<b>比較対象は他人ではなく、前回の自分だけである。</b><span class="tk">前回の自分も大したことはない</span><br><br>
+    必要な時間は<b>1回およそ50分</b>。獲物は<b>マシン</b>。<br>
+    これは、細身の男が<b>年間+6〜8kg</b>の肉体を鍛造するまでの、104回の儀式の書である。<span class="tk">たぶん何回かはサボる</span>
+  </p>
+</div>
+
+<!-- ══ パラメータ ══ -->
+<div class="window">
+  <div class="w-head">
+    <span class="w-title">◆ 基本パラメータ</span>
+    <span class="w-tag">Lv.1 / Week 0</span>
+  </div>
+  <div class="w-body">
+    <div class="params">
+      <div class="param"><span class="p-name">きんりょく</span><span class="bar"><i class="b-low" style="width:18%"></i></span><span class="p-val dead">18 / 100</span></div>
+      <div class="param"><span class="p-name">たいかん（体幹）</span><span class="bar"><i class="b-low" style="width:15%"></i></span><span class="p-val dead">15 / 100</span></div>
+      <div class="param"><span class="p-name">スタミナ</span><span class="bar"><i class="b-low" style="width:24%"></i></span><span class="p-val dead">24 / 100</span></div>
+      <div class="param"><span class="p-name">胃袋容量</span><span class="bar"><i class="b-low" style="width:12%"></i></span><span class="p-val dead">BROKEN</span></div>
+      <div class="param"><span class="p-name">フォーム精度</span><span class="bar"><i class="b-mid" style="width:45%"></i></span><span class="p-val">45</span></div>
+      <div class="param"><span class="p-name">見栄え（鏡の中）</span><span class="bar"><i class="b-low" style="width:8%"></i></span><span class="p-val dead">8</span></div>
+      <div class="param"><span class="p-name">週二の意志</span><span class="bar"><i class="b-max" style="width:100%"></i></span><span class="p-val top">999</span></div>
+    </div>
+    <p class="tk" style="margin-top:16px">週二の意志999は、ジムに着くまでの間のみ発動。ベッドの上では14。</p>
+    <p class="tk">胃袋容量BROKEN。増量したいのに食えないという矛盾を抱えている。</p>
+    <p class="tk">見栄え8は、この書を書いた時点の数値。3ヶ月で更新される予定。</p>
+  </div>
+</div>
+
+<!-- ══ 称号 ══ -->
+<div class="window">
+  <div class="w-head">
+    <span class="w-title">◆ 称号</span>
+    <span class="w-tag">Titles</span>
+  </div>
+  <div class="w-body">
+    <div class="list">
+      <div class="item">
+        <div class="i-head"><span class="i-name dim">「細い人」</span><span class="i-rank no">Granted by 世間</span></div>
+        <p class="i-desc">一方的に授与された称号。装備するとTシャツのサイズが常に余る。<b style="color:var(--blood)">1年後に返却予定。</b></p>
+      </div>
+      <div class="item">
+        <div class="i-head"><span class="i-name">「水と土の契約者」</span><span class="i-rank">Self-proclaimed</span></div>
+        <p class="i-desc">週に二度だけ鉄に魂を捧げる者。継続力+900。<span class="tk">獲得条件：予定を入れないこと</span></p>
+      </div>
+      <div class="item">
+        <div class="i-head"><span class="i-name">「休息を恐れぬ者」</span><span class="i-rank">Rare</span></div>
+        <p class="i-desc">体調が悪い日に、堂々と休める者にのみ与えられる。<b>週2は1回飛ばしても壊れない。</b><span class="tk">2回飛ばすと少し焦る</span></p>
+      </div>
+      <div class="item">
+        <div class="i-head"><span class="i-name">「マシンの調整を見破りし者」</span><span class="i-rank">Earned</span></div>
+        <p class="i-desc">シートの高さとパッドの位置を自力で合わせられる者の証。<span class="tk">分からなければスタッフに聞けばよい。それでも称号は剥奪されない</span></p>
+      </div>
+      <div class="item">
+        <div class="i-head"><span class="i-name dim">「ガタイいいね」</span><span class="i-rank no">Not acquired</span></div>
+        <p class="i-desc">他者の口から発せられて初めて獲得できる、最終称号。<b>獲得条件：+6〜8kg。</b>約1年。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 装備 ══ -->
+<div class="window">
+  <div class="w-head">
+    <span class="w-title">◆ 現在の装備</span>
+    <span class="w-tag">Equipment</span>
+  </div>
+  <div class="w-body">
+    <div class="list">
+      <div class="item"><div class="i-head"><span class="i-name">右手：水入りのシェイカー</span><span class="i-rank">Common</span></div><p class="i-desc">HP微回復。飲んだ直後に水を入れて振って捨てると、洗浄の難易度が激減する。<span class="tk">忘れると翌日、闇の生命体が誕生する</span></p></div>
+      <div class="item"><div class="i-head"><span class="i-name">左手：この書（スマホ）</span><span class="i-rank">Artifact</span></div><p class="i-desc">刻印をタップすることでセットを記録できる。<b>迷う時間を消滅させるための装備。</b></p></div>
+      <div class="item"><div class="i-head"><span class="i-name">胴：普通のTシャツ</span><span class="i-rank">Common</span></div><p class="i-desc">今はまだ余っている。1年後、この装備は呪いに変わる（サイズが合わなくなる）。</p></div>
+      <div class="item"><div class="i-head"><span class="i-name">足：紐を結び直した靴</span><span class="i-rank">Uncommon</span></div><p class="i-desc">レッグプレスで踏ん張る時、ここが全ての起点になる。<span class="tk">サンダルは論外</span></p></div>
+      <div class="item"><div class="i-head"><span class="i-name">秘薬：プロテイン（1杯）</span><span class="i-rank">Legendary</span></div><p class="i-desc">トレした日に1杯で足りる。<b>毎日2杯は週2の修行者には過剰。</b>紙パックのミルクプロテイン、卵2個、納豆、ツナ缶でも代替可。</p></div>
+      <div class="item"><div class="i-head"><span class="i-name">聖域：マシンエリアの隅</span><span class="i-rank">Sanctuary</span></div><p class="i-desc">フリーウェイトの猛者たちを横目に、静かに鉄を挙げる場所。<span class="tk">誰もこちらを見ていない。本当に</span></p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 第一の儀式 ══ -->
+<div class="chapter">
+  <p class="ch-label">Rite I</p>
+  <h2 class="ch-title">水曜、上半身に火を入れる ――胸・背・肩の儀</h2>
+  <p class="ch-when">Wednesday · 約50分 · マシン中心</p>
+  <p class="ch-lead">見た目が最も早く変わるのは<b>上半身</b>である。胸と背中と肩――この三つが厚くなった時、服の上からでも「変わった」と気づかれる。<b>ここが最初の戦場だ。</b></p>
+  <div class="rites" id="rites-wed"></div>
+</div>
+
+<!-- ══ 第二の儀式 ══ -->
+<div class="chapter">
+  <p class="ch-label">Rite II</p>
+  <h2 class="ch-title">土曜、大地を踏み砕く ――脚・体幹の儀</h2>
+  <p class="ch-when">Saturday · 約50分 · 有酸素あり</p>
+  <p class="ch-lead">脚は<b>全身で最も大きな筋肉</b>である。ここを鍛えた者は身体そのものが変わり、避けた者は上半身だけが育った奇妙な姿になる。<b>逃げるな。</b><span class="tk">なお翌日は階段が敵になる</span></p>
+  <div class="rites" id="rites-sat"></div>
+</div>
+
+<!-- ══ 凶兆 ══ -->
+<div class="omen">
+  <div class="t">◆ 凶兆 ―― 「気持ち悪い」は、魔の兆し</div>
+  <p><b>気持ち悪くなったら、それはやりすぎの合図である。</b>そこから先に成長は無く、あるのは消耗だけだ。即座に儀式を中断せよ。</p>
+  <ol>
+    <li>マシンから降りて座る</li>
+    <li>水をゆっくり飲む</li>
+    <li>涼しい場所で3〜5分休む</li>
+    <li>治まらない・冷や汗が出るならスタッフへ</li>
+  </ol>
+  <p>次回は<b>重量を2〜3段階落とせ</b>。そして力む時に息を止めるな――血圧が上がる。<b>押す瞬間に「フーッ」と吐く。</b>これだけで魔の出現率は激減する。</p>
+</div>
+
+<!-- ══ 掟 ══ -->
+<div class="window">
+  <div class="w-head">
+    <span class="w-title">◆ 四つの掟</span>
+    <span class="w-tag">The Four Laws</span>
+  </div>
+  <div class="w-body">
+    <div class="laws">
+
+      <div class="law">
+        <h3>重量の理 <em>Load</em></h3>
+        <p class="big">+2〜3回 <small>の余力を残す</small></p>
+        <p>10回終わって「あと2〜3回いけそう」が正解の重さ。<b>12回が余裕で上がったら、次回1段階だけ上げる。</b></p>
+        <p class="tk">毎セット限界まで追い込むのは、この段階では不要。伸びるより先に折れる。</p>
+      </div>
+
+      <div class="law">
+        <h3>停滞の掟 <em>Progress</em></h3>
+        <p class="big">前回 +1 <small>だけでいい</small></p>
+        <p>伸ばす条件はひとつ――<b>前回より重く、または前回より1回多く。</b>同じ重量で同じ回数を続けても、体は「今のままでいい」と判断する。</p>
+        <p class="tk">刻印を毎回埋めていれば、前回の記録は勝手に残る。</p>
+      </div>
+
+      <div class="law">
+        <h3>間（ま）の理 <em>Rest</em></h3>
+        <p class="big">60〜90<small>秒</small></p>
+        <p><b>マシンに座ったままでOK。</b>短い休憩でいちいち席を立つ方が非効率である。</p>
+        <p>誰か待っていたら「一緒に使いますか」「あと2セットで終わります」と声をかける。<b>座って休むのはマナー違反ではない。スマホで5分居座るのがアウト。</b></p>
+      </div>
+
+      <div class="law">
+        <h3>糧の理 <em>Fuel</em></h3>
+        <p class="big">90〜115<small>g / 日のたんぱく質</small></p>
+        <p>増量するなら<b>維持カロリー +300〜500kcal</b>。ご飯を1杯増やすだけでほぼ届く。</p>
+        <p><b>体重を増やしたい旨は、主治医に相談すること。</b>ここだけは自己流でやらない。</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ 封印 ══ -->
+<div class="window">
+  <div class="w-head">
+    <span class="w-title">◆ 封印指定 ―― やってはならぬこと</span>
+    <span class="w-tag">Sealed</span>
+  </div>
+  <div class="w-body">
+    <div class="list" style="gap:15px">
+      <div class="seal-row"><span><b>毎日ジムに通う</b><p class="i-desc">筋肉は<b>休んでいる間に</b>育つ。週2は妥協ではなく、回復まで含めた設計である。</p></span></div>
+      <div class="seal-row"><span><b>SNSで見た上級者メニュー</b><p class="i-desc">分割法も追い込みも、数年鍛えた者のための術。今それを唱えても、消耗するだけで終わる。<span class="tk">保存フォルダに入れておくのは自由</span></p></span></div>
+      <div class="seal-row"><span><b>毎日体重計に乗る</b><p class="i-desc">1日単位の増減は水分である。<b>測るなら週1回、同じ曜日・同じ時間に。</b></p></span></div>
+      <div class="seal-row"><span><b>ラットプルダウンを首の後ろに引く</b><p class="i-desc">古い流派の禁術。肩を確実に痛める。<b>バーは必ず鎖骨のあたりへ。</b></p></span></div>
+      <div class="seal-row"><span><b>他人の重量を見る</b><p class="i-desc">隣の男が挙げている数字は、あなたの成長と一片の関係もない。<b style="color:var(--ash-dim)">――比較対象は、前回の自分ただ一人。</b></p></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 終章 ══ -->
+<div class="finale">
+  <div class="t">終章 ―― そして、服のサイズが変わった</div>
+  <p>
+    <b>3ヶ月</b>　+2〜3kg ―― 鏡の前で、自分だけが気づく。<br>
+    <b>6ヶ月</b>　+4〜5kg ―― 服の上から分かるようになる。<br>
+    <b>1年</b>　　+6〜8kg ―― 他人の口から「ガタイいいね」が出る。
+  </p>
+  <p>
+    初心者の筋肉増加は<b>月0.5〜1kgが上限</b>。それ以上のペースで増えているなら、それは脂肪も連れてきている。<b>焦る者は、必ず遠回りする。</b>
+  </p>
+  <p class="last">――行った時点で、勝ち。</p>
+  <p class="tk" style="margin-top:18px">※ただし帰りにラーメンを食べても、それはそれで増量である</p>
+</div>
+
+<div class="foot-bar">
+  <p>体調が悪い日は休む。週2は1回飛ばしても壊れない。</p>
+  <button class="reset" id="reset" type="button">刻印を消す</button>
+</div>
+
+<footer>
+  2 Days / Week &nbsp;·&nbsp; 50 Min &nbsp;·&nbsp; 1 Year<br>
+  Show up, then add one
+</footer>
+
+</div>
+
+<script>
+  const RITES = {
+    wed: [
+      { ord: "序", name: "【始動の輪】", en: "Warm-up — バイク", n: "5", x: "分", sets: 0, aux: true,
+        cues: ["負荷は一番軽い〜下から2〜3段階目", "60〜70rpm でゆったり回す",
+               "鼻歌が歌えるくらい。ここで頑張らない|tk"] },
+      { ord: "壱", name: "【胸壁破砕】", en: "Chest Press — チェストプレス", n: "10-12", x: "Reps × 3", sets: 3,
+        cues: ["肩をすくめず、落としたまま押す", "押し切った時に肘を完全ロックしない", "背中をパッドにつける",
+               "最初に効果が出るのはここ。鏡でいちばん変化が分かる|tk"] },
+      { ord: "弐", name: "【天翼展開】", en: "Lat Pulldown — ラットプルダウン", n: "10-12", x: "Reps × 3", sets: 3,
+        cues: ["手幅は肩幅よりやや広め", "バーは鎖骨のあたりまで引く",
+               "首の後ろに引くのはNG（肩を痛める）", "肩甲骨を先に寄せてから肘を引く。腕で引くな",
+               "背中が広がると、正面から見た時に逆三角形になる|tk"] },
+      { ord: "参", name: "【天穹を支える者】", en: "Shoulder Press — ショルダープレス", n: "10-12", x: "Reps × 3", sets: 3,
+        cues: ["反動を使わない", "肘を伸ばし切らない", "腰を反らせない",
+               "肩幅は「ガタイ」の印象を最も左右する部位|tk"] },
+      { ord: "肆", name: "【三頭の蛇】", en: "Seated Dip — シーテッドディップ", n: "10-12", x: "Reps × 3", sets: 3,
+        cues: ["脇を締めて、肘を体の横に沿わせる", "下ろしすぎない（肩の事故ポイント）",
+               "押し切った時に肘をロックしない", "腕の太さの2/3は二頭ではなく三頭が決める|tk"] },
+      { ord: "終", name: "【鎮魂】", en: "Cool down — ストレッチ", n: "5", x: "分", sets: 0, aux: true,
+        cues: ["胸・肩・背中を伸ばす", "翌日のダメージが変わる",
+               "ここを省略した者は、2日後に後悔する|tk"] }
+    ],
+    sat: [
+      { ord: "序", name: "【始動の輪】", en: "Warm-up — バイク", n: "5", x: "分", sets: 0, aux: true,
+        cues: ["負荷は最弱〜2〜3段階目、60〜70rpm",
+               "体調が微妙な日は7〜8分に伸ばして様子を見る", "そこで「今日は無理だ」と判断してもいい|tk"] },
+      { ord: "壱", name: "【大地圧砕】", en: "Leg Press — レッグプレス", n: "10-12", x: "Reps × 3", sets: 3,
+        cues: ["膝を伸ばし切らない（ロックしない）", "足は肩幅、つま先と膝の向きを揃える",
+               "戻す時に腰が浮かないところまで", "全身で最も重い重量を扱える種目。数字が伸びると楽しい|tk"] },
+      { ord: "弐", name: "【四頭の獣】", en: "Leg Extension — レッグエクステンション", n: "12-15", x: "Reps × 3", sets: 3,
+        cues: ["戻す時をゆっくり（3秒）", "反動で振り上げない", "膝に痛みが出たら即中止"] },
+      { ord: "参", name: "【裏の刃】", en: "Seated Leg Curl — シーテッドレッグカール", n: "12-15", x: "Reps × 3", sets: 3,
+        cues: ["背もたれを前に出し、膝の関節をマシンの回転軸に合わせる",
+               "太ももパッドは膝の上ではなく「太ももの下の方」に固定",
+               "背中をシートにつけ、お尻を浮かせない", "戻す時は3秒かけて",
+               "調整が合うと効きが激変する。分からなければスタッフに聞く|tk"] },
+      { ord: "肆", name: "【腹の封印解除】", en: "Abdominal — アブドミナル", n: "15", x: "Reps × 3", sets: 3,
+        cues: ["反動を使わない", "息を吐きながら丸める",
+               "腹筋は割るより先に、体幹として使えるようにする|tk"] },
+      { ord: "伍", name: "【背骨の柱】", en: "Back Extension — バックエクステンション", n: "15", x: "Reps × 2", sets: 2,
+        cues: ["反りすぎない（真っ直ぐで止める）", "姿勢改善と腰痛予防に効く",
+               "地味だが、ここが効いてくると立ち姿が変わる|tk"] },
+      { ord: "走", name: "【読書結界】", en: "Cardio — バイク", n: "15", x: "分", sets: 0, aux: true,
+        cues: ["読書に集中できる強度に抑える", "息が上がると文字が追えない。それが強度の目安",
+               "増量中なので、ここで頑張りすぎない|tk"] },
+      { ord: "終", name: "【鎮魂】", en: "Cool down — ストレッチ", n: "5", x: "分", sets: 0, aux: true,
+        cues: ["脚・股関節・腰を念入りに", "脚トレの翌日は特に効く"] }
+    ]
+  };
+
+  const ROMAN = ["I", "II", "III", "IV", "V"];
+  const STORE_KEY = "iron-grimoire-runes";
+
+  function today() {
+    const d = new Date();
+    return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      if (!parsed || parsed.date !== today()) return {};
+      return parsed.marks && typeof parsed.marks === "object" ? parsed.marks : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveState(marks) {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({ date: today(), marks: marks }));
+    } catch (e) { /* 記録できない環境でも儀式は続行できる */ }
+  }
+
+  let marks = loadState();
+
+  function escapeText(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function cueHTML(cue) {
+    const isTk = cue.endsWith("|tk");
+    const text = escapeText(isTk ? cue.slice(0, -3) : cue);
+    if (isTk) return '<li class="note"><span class="tk">' + text + "</span></li>";
+    const warn = /NG|中止|痛/.test(text);
+    return "<li" + (warn ? ' class="warn"' : "") + ">" + text + "</li>";
+  }
+
+  function render(day) {
+    const host = document.getElementById("rites-" + day);
+    host.innerHTML = RITES[day].map(function (r, i) {
+      const runes = r.sets
+        ? '<div class="runes"><span class="label">刻印</span>' +
+          Array.from({ length: r.sets }, function (_, s) {
+            const key = day + ":" + i + ":" + s;
+            const on = marks[key] === true;
+            return '<button class="rune" type="button" data-key="' + key + '" aria-pressed="' + on +
+                   '" aria-label="' + escapeText(r.name) + " セット" + (s + 1) + '">' + ROMAN[s] + "</button>";
+          }).join("") + "</div>"
+        : "";
+      return '<article class="rite' + (r.aux ? " aux" : "") + '">' +
+               '<div class="rite-h">' +
+                 '<span class="ord">' + r.ord + "</span>" +
+                 '<span class="rite-n"><b>' + escapeText(r.name) + "</b><span>" + escapeText(r.en) + "</span></span>" +
+                 '<span class="dose"><span class="n">' + r.n + '</span><span class="x">' + r.x + "</span></span>" +
+               "</div>" +
+               runes +
+               '<ul class="cues">' + r.cues.map(cueHTML).join("") + "</ul>" +
+             "</article>";
+    }).join("");
+  }
+
+  render("wed");
+  render("sat");
+
+  document.addEventListener("click", function (e) {
+    const rune = e.target.closest(".rune");
+    if (!rune) return;
+    const on = rune.getAttribute("aria-pressed") !== "true";
+    rune.setAttribute("aria-pressed", String(on));
+    marks[rune.dataset.key] = on;
+    saveState(marks);
+  });
+
+  document.getElementById("reset").addEventListener("click", function () {
+    marks = {};
+    saveState(marks);
+    document.querySelectorAll('.rune[aria-pressed="true"]').forEach(function (r) {
+      r.setAttribute("aria-pressed", "false");
+    });
+  });
+</script>
