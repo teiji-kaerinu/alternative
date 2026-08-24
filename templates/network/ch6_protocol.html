@@ -1,0 +1,126 @@
+<div class="card">
+    <h2>6. 主要なプロトコル</h2>
+
+    <h3>DNS(Domain Name System)</h3>
+    <p><span class="key">ドメイン名とIPアドレスを対応づける仕組み</span>。
+       人間は <code>www.example.co.jp</code> を覚え、機械は <code>93.184.216.34</code> を使うので、その翻訳役。</p>
+    <ul>
+        <li><b>正引き</b> … ドメイン名 → IPアドレス(普通はこっち)</li>
+        <li><b>逆引き</b> … IPアドレス → ドメイン名</li>
+        <li>世界中のDNSサーバが<b>階層構造</b>で分担している(ルート → jp → co.jp → example.co.jp)</li>
+        <li><b>キャッシュサーバ</b>が一度調べた結果を保存し、次から高速に答える</li>
+        <li>ポートは <b>53</b>。通常の問い合わせは <b>UDP</b>、ゾーン転送は <b>TCP</b></li>
+    </ul>
+    <div class="table-wrap">
+        <table>
+            <tr><th>レコード</th><th>内容</th></tr>
+            <tr><td><b>A</b></td><td>ドメイン名 → IPv4アドレス</td></tr>
+            <tr><td><b>AAAA</b></td><td>ドメイン名 → IPv6アドレス</td></tr>
+            <tr><td><b>MX</b></td><td>メールサーバの指定</td></tr>
+            <tr><td><b>CNAME</b></td><td>別名(エイリアス)</td></tr>
+            <tr><td><b>NS</b></td><td>そのドメインを管理するDNSサーバ</td></tr>
+            <tr><td><b>PTR</b></td><td>逆引き用</td></tr>
+        </table>
+    </div>
+
+    <h3>DHCP(Dynamic Host Configuration Protocol)</h3>
+    <p><span class="key">IPアドレスなどの設定を自動で配る仕組み</span>。
+       配るのは IPアドレス・サブネットマスク・デフォルトゲートウェイ・DNSサーバのアドレス。</p>
+    <div class="box">クライアント                     DHCPサーバ
+    │── ① DISCOVER(ブロードキャスト)─▶│  「誰かIPくれ」
+    │◀─ ② OFFER ───────────────────│  「これ使う?」
+    │── ③ REQUEST ─────────────────▶│  「それください」
+    │◀─ ④ ACK ─────────────────────│  「どうぞ」</div>
+    <ul>
+        <li>頭文字で <b>D → O → R → A</b>(ドーラ)と覚える</li>
+        <li>配られたアドレスには<b>リース期間</b>(貸出期限)がある。期限が切れる前に更新する</li>
+        <li>DHCPサーバが見つからないと <b>169.254.x.x</b>(APIPA)が自動で付く</li>
+    </ul>
+
+    <h3>ARP(Address Resolution Protocol)</h3>
+    <p><span class="key">IPアドレスから MACアドレスを調べるプロトコル</span>。
+       実際にフレームを送るには MACアドレスが必要なので、送信直前に必ず使われる。</p>
+    <div class="box">① 「192.168.1.1 の人、MACアドレス教えて!」
+   → ブロードキャストで全員に聞く(ARPリクエスト)
+② 「それ私です。00-1B-44-11-3A-B7 です」
+   → 本人だけがユニキャストで返す(ARPリプライ)
+③ 結果は ARPテーブル(キャッシュ)に一定時間保存する</div>
+    <p><b>RARP</b> は逆に MACアドレスから IPアドレスを調べる(ディスクレス端末などで使用)。</p>
+
+    <h3>ICMP(Internet Control Message Protocol)</h3>
+    <p>ネットワーク層のエラー通知・状態確認用。<b>データを運ぶためのものではない</b>。</p>
+    <ul>
+        <li><b>ping</b> … Echo Request / Echo Reply で<b>疎通確認</b>する。「相手は生きてるか」</li>
+        <li><b>traceroute(tracert)</b> … <b>TTL</b>を1ずつ増やして送り、途中のルータを順番に洗い出す</li>
+        <li><b>TTL</b>(Time To Live) … パケットの寿命。ルータを通るたびに1減り、<b>0になると破棄</b>される。
+            ループしたパケットが永久に回り続けるのを防ぐ</li>
+    </ul>
+
+    <h3>HTTP / HTTPS</h3>
+    <ul>
+        <li>Webページをやり取りするプロトコル。<b>リクエスト</b>と<b>レスポンス</b>の繰り返し</li>
+        <li><b>ステートレス</b> … 前回のやり取りを覚えていない。だから <b>Cookie</b> で状態を保持する</li>
+        <li><b>HTTPS</b> は HTTP を <b>SSL/TLS</b> で暗号化したもの。ポート443</li>
+    </ul>
+    <div class="table-wrap">
+        <table>
+            <tr><th>メソッド</th><th>意味</th></tr>
+            <tr><td>GET</td><td>データを取得する(URLに情報が乗る)</td></tr>
+            <tr><td>POST</td><td>データを送信する(本文に情報が乗る)</td></tr>
+            <tr><td>PUT / DELETE</td><td>更新 / 削除</td></tr>
+        </table>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <tr><th>コード</th><th>意味</th></tr>
+            <tr><td><b>200</b></td><td>OK(成功)</td></tr>
+            <tr><td>301 / 302</td><td>リダイレクト(移動した)</td></tr>
+            <tr><td>400</td><td>Bad Request(リクエストがおかしい)</td></tr>
+            <tr><td>401 / 403</td><td>認証が必要 / アクセス禁止</td></tr>
+            <tr><td><b>404</b></td><td>Not Found(ページがない)</td></tr>
+            <tr><td><b>500</b></td><td>Internal Server Error(サーバ側のエラー)</td></tr>
+            <tr><td>503</td><td>Service Unavailable(混雑・メンテ中)</td></tr>
+        </table>
+    </div>
+    <div class="note">
+        <b>番号の頭で判断できる。</b>
+        2xx = 成功 / 3xx = リダイレクト / <b>4xx = クライアント側が悪い</b> / <b>5xx = サーバ側が悪い</b>
+    </div>
+
+    <h3>メール関連</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>プロトコル</th><th>役割</th><th>ポート</th></tr>
+            <tr><td><b>SMTP</b></td><td><b>送信</b>とサーバ間の転送</td><td>25(送信用に587も)</td></tr>
+            <tr><td><b>POP3</b></td><td><b>受信</b>。メールを端末に<b>ダウンロードして削除</b>するのが基本</td><td>110</td></tr>
+            <tr><td><b>IMAP4</b></td><td><b>受信</b>。メールを<b>サーバに置いたまま</b>管理する。複数端末で見るのに向く</td><td>143</td></tr>
+        </table>
+    </div>
+    <div class="box">送信者 ──SMTP──▶ 送信メールサーバ ──SMTP──▶ 受信メールサーバ
+                                                    │
+                                          POP3/IMAP4 で取りに行く
+                                                    ▼
+                                                 受信者</div>
+    <ul>
+        <li><b>MIME</b> … 本来ASCIIしか運べないメールで、<b>日本語や画像・添付ファイル</b>を扱えるようにする拡張。
+            暗号化・署名まで対応したものが <b>S/MIME</b></li>
+        <li><b>SMTP-AUTH</b> … メール送信時にユーザ認証を行い、迷惑メールの踏み台にされるのを防ぐ</li>
+        <li><b>OP25B</b>(Outbound Port 25 Blocking) … ISPが外向きのポート25を遮断し、迷惑メールを抑止する仕組み</li>
+        <li><b>SPF / DKIM / DMARC</b> … 送信元のなりすましを検出する仕組み</li>
+    </ul>
+
+    <h3>その他のプロトコル</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>名前</th><th>役割</th></tr>
+            <tr><td><b>FTP</b></td><td>ファイル転送。制御用21番とデータ用20番の<b>2本を使う</b>のが特徴</td></tr>
+            <tr><td><b>SSH</b></td><td>暗号化してリモート操作する。Telnet の安全版</td></tr>
+            <tr><td><b>Telnet</b></td><td>リモート操作。<b>平文なので現在は非推奨</b></td></tr>
+            <tr><td><b>SNMP</b></td><td>ネットワーク機器の監視・管理。<b>マネージャ</b>が<b>エージェント</b>から情報を集める。
+                管理情報のデータベースが <b>MIB</b>、異常時にエージェント側から通知するのが<b>トラップ</b></td></tr>
+            <tr><td><b>NTP</b></td><td>機器の時刻を正確に合わせる</td></tr>
+            <tr><td><b>SIP / RTP</b></td><td>IP電話。SIPが呼び出し(発着信)の制御、RTPが音声データの転送</td></tr>
+            <tr><td><b>LDAP</b></td><td>ユーザ情報などのディレクトリサービスへの問い合わせ</td></tr>
+        </table>
+    </div>
+</div>

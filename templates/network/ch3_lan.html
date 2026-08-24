@@ -1,0 +1,117 @@
+<div class="card">
+    <h2>3. LAN・イーサネット・無線LAN</h2>
+
+    <h3>イーサネットの規格</h3>
+    <p>読み方は<span class="key">「速度 BASE 媒体」</span>。BASE はベースバンド伝送(デジタル信号をそのまま流す方式)の意味。</p>
+    <div class="table-wrap">
+        <table>
+            <tr><th>規格</th><th>速度</th><th>ケーブル</th></tr>
+            <tr><td>10BASE-T</td><td>10Mbps</td><td>ツイストペア(UTP)</td></tr>
+            <tr><td>100BASE-TX</td><td>100Mbps</td><td>ツイストペア(カテゴリ5以上)</td></tr>
+            <tr><td>1000BASE-T</td><td>1Gbps</td><td>ツイストペア(カテゴリ5e以上)</td></tr>
+            <tr><td>1000BASE-SX / LX</td><td>1Gbps</td><td>光ファイバ</td></tr>
+        </table>
+    </div>
+    <p>ツイストペアケーブルは<b>2本1組をより合わせて</b>ノイズを打ち消している。
+       シールドなしが <b>UTP</b>、シールドありが <b>STP</b>。</p>
+
+    <h3>MACアドレス</h3>
+    <ul>
+        <li><span class="key">48ビット</span>。16進数12桁で <code>00-1B-44-11-3A-B7</code> のように書く</li>
+        <li>前半24ビット = <b>ベンダID(OUI)</b>。メーカーに割り当てられた番号</li>
+        <li>後半24ビット = メーカー内の製造番号</li>
+        <li>NIC(LANカード)に<b>製造時に焼き込まれている</b>ので、原則として世界中で重複しない</li>
+    </ul>
+    <div class="note">
+        <b>IPアドレスとの違い。</b>MACアドレスは<b>機器そのものに固定</b>(引っ越しても変わらない)。
+        IPアドレスは<b>繋いだ場所によって変わる</b>。手紙で言えば MAC が「マイナンバー」、IP が「住所」。
+    </div>
+
+    <h3>イーサネットフレームの構造</h3>
+    <div class="box">[プリアンブル][宛先MAC][送信元MAC][タイプ][   データ   ][FCS]
+                  6バイト   6バイト   2バイト   46〜1500バイト  4バイト</div>
+    <ul>
+        <li><b>FCS</b>(Frame Check Sequence) … <b>CRC</b> による誤り検出用の値。壊れていたらフレームを捨てる</li>
+        <li><b>MTU</b> … 1フレームで運べるデータの最大サイズ。イーサネットは通常<b>1500バイト</b></li>
+    </ul>
+
+    <h3>アクセス制御方式(衝突対策)</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th></th><th>CSMA/CD</th><th>CSMA/CA</th></tr>
+            <tr><td>使う場所</td><td><b>有線LAN</b>(IEEE 802.3)</td><td><b>無線LAN</b>(IEEE 802.11)</td></tr>
+            <tr><td>CD / CA</td><td>Collision <b>Detection</b>(衝突検出)</td><td>Collision <b>Avoidance</b>(衝突回避)</td></tr>
+            <tr><td>やり方</td><td>回線が空いたら送る。<b>衝突したら</b>ランダム時間待って再送</td><td>回線が空いても<b>ランダム時間待ってから</b>送る。ACKで到達確認</td></tr>
+            <tr><td>なぜ違う</td><td>—</td><td>無線は送信中に他人の信号を聞けず、<b>衝突を検出できない</b>ため、先に避ける</td></tr>
+        </table>
+    </div>
+    <div class="note">
+        <b>CSMA/CD は今は使われていない。</b>スイッチングハブ + 全二重通信が主流になり、
+        そもそも衝突が起きない。試験では「昔の半二重イーサネットの技術」として出る。
+    </div>
+
+    <h3>スイッチングハブの動作</h3>
+    <ol>
+        <li>フレームを受け取ると、<b>送信元MACアドレスとポート番号</b>を MACアドレステーブルに記録する(<b>自己学習</b>)</li>
+        <li>宛先MACがテーブルにあれば、<b>そのポートだけ</b>に転送する</li>
+        <li>テーブルに無ければ、受信ポート以外の<b>全ポートに転送</b>する(<b>フラッディング</b>)</li>
+    </ol>
+    <p>転送方式には、フレーム全体を受け取ってから送る<b>ストアアンドフォワード</b>(誤りを捨てられる)と、
+       宛先だけ読んですぐ送る<b>カットスルー</b>(速いが誤りも通す)がある。</p>
+
+    <h3>VLAN(仮想LAN)</h3>
+    <p><span class="key">物理的な配線に関係なく、論理的にLANを分割する</span>技術。
+       同じスイッチに繋がっていても、別のVLANなら直接通信できない(ルータやL3スイッチを経由する必要がある)。</p>
+    <ul>
+        <li><b>ポートVLAN</b> … スイッチのポート単位でグループ分けする</li>
+        <li><b>タグVLAN</b> … フレームにVLAN識別子のタグを付ける(<b>IEEE 802.1Q</b>)。
+            1本のケーブルで複数VLANを運べる</li>
+    </ul>
+    <p>メリット … 部署ごとに分けてセキュリティ向上、ブロードキャストの範囲を狭める、配線を変えずに構成変更できる。</p>
+
+    <h3>無線LAN(Wi-Fi)の規格</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>規格</th><th>通称</th><th>周波数帯</th><th>最大速度</th></tr>
+            <tr><td>IEEE 802.11b</td><td>—</td><td>2.4GHz</td><td>11Mbps</td></tr>
+            <tr><td>IEEE 802.11a</td><td>—</td><td>5GHz</td><td>54Mbps</td></tr>
+            <tr><td>IEEE 802.11g</td><td>—</td><td>2.4GHz</td><td>54Mbps</td></tr>
+            <tr><td>IEEE 802.11n</td><td>Wi-Fi 4</td><td>2.4 / 5GHz</td><td>600Mbps</td></tr>
+            <tr><td>IEEE 802.11ac</td><td>Wi-Fi 5</td><td>5GHz</td><td>約6.9Gbps</td></tr>
+            <tr><td>IEEE 802.11ax</td><td>Wi-Fi 6</td><td>2.4 / 5GHz</td><td>約9.6Gbps</td></tr>
+        </table>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <tr><th>周波数帯</th><th>長所</th><th>短所</th></tr>
+            <tr><td><b>2.4GHz</b></td><td>障害物に強く、遠くまで届く</td><td>電子レンジ・Bluetoothと<b>干渉しやすい</b></td></tr>
+            <tr><td><b>5GHz</b></td><td>干渉が少なく<b>高速</b></td><td>障害物に弱い</td></tr>
+        </table>
+    </div>
+
+    <h3>無線LANの用語とセキュリティ</h3>
+    <ul>
+        <li><b>SSID / ESSID</b> … アクセスポイントの名前。<b>ステルス機能</b>で名前を隠せる</li>
+        <li><b>MACアドレスフィルタリング</b> … 登録した機器だけ接続を許可する。ただし<b>偽装できるので万能ではない</b></li>
+        <li><b>インフラストラクチャモード</b> … アクセスポイント経由で通信(普通のWi-Fi)</li>
+        <li><b>アドホックモード</b> … 端末同士が直接通信する</li>
+        <li><b>ローミング</b> … 移動しながらアクセスポイントを自動で切り替える</li>
+    </ul>
+    <div class="table-wrap">
+        <table>
+            <tr><th>暗号化方式</th><th>評価</th></tr>
+            <tr><td><b>WEP</b></td><td>× 脆弱性があり<b>使ってはいけない</b>。短時間で解読される</td></tr>
+            <tr><td><b>WPA</b></td><td>△ TKIP を採用。WEP の改良版だが現在は非推奨</td></tr>
+            <tr><td><b>WPA2</b></td><td>○ <b>AES(CCMP)</b>を採用。現在の標準</td></tr>
+            <tr><td><b>WPA3</b></td><td>◎ 最新。より強固な鍵交換(SAE)</td></tr>
+        </table>
+    </div>
+
+    <h3>その他</h3>
+    <ul>
+        <li><b>PoE</b>(Power over Ethernet) … LANケーブルで<b>電力も供給</b>する。アクセスポイントや監視カメラの設置に便利(IEEE 802.3af/at)</li>
+        <li><b>リンクアグリゲーション</b> … 複数のLANケーブルを束ねて1本に見せる。高速化と冗長化(IEEE 802.3ad)</li>
+        <li><b>スパニングツリープロトコル(STP)</b> … スイッチをループ状に繋いだときの<b>ブロードキャストストーム</b>を防ぐ。
+            一部の経路を論理的に遮断しておき、障害時に開通させる(IEEE 802.1D)</li>
+    </ul>
+</div>
