@@ -62,6 +62,11 @@ def alternative():
 def study():
     return render_template("study.html")
 
+# 「/network」: ネットワーク用語まとめ(NAT / NAPT / チェックサム)
+@app.route("/network")
+def network():
+    return render_template("network.html")
+
 # このファイルを直接実行したらサーバーを起動する
 if __name__ == "__main__":
     app.run(debug=True)

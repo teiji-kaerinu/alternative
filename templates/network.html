@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ネットワーク用語まとめ — NAT / NAPT</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 30px 20px;
+            max-width: 720px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        h1 { color: #8b7bff; text-align: center; margin-bottom: 6px; }
+        .subtitle { text-align: center; color: #9a90c8; margin-bottom: 24px; }
+        nav { text-align: center; margin-bottom: 20px; }
+        nav a { color: #8b7bff; margin: 0 10px; text-decoration: none; }
+
+        /* ===== タブのボタン(works.htmlと同じ作り) ===== */
+        .tabs { display: flex; justify-content: center; gap: 8px; margin: 24px 0; flex-wrap: wrap; }
+        .tab {
+            font-size: 0.95em;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #16213e;
+            color: #ccc;
+            cursor: pointer;
+        }
+        .tab.active { background: #8b7bff; color: #1a1a2e; font-weight: bold; }  /* 選択中のタブ */
+
+        /* ===== 中身のパネル ===== */
+        .panel { display: none; }        /* 普段は隠す */
+        .panel.active { display: block; } /* activeなパネルだけ表示 */
+
+        /* 解説カード1枚 */
+        .card {
+            background: #16213e;
+            border: 1px solid rgba(139,123,255,0.3);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 18px;
+        }
+        .card h2 { color: #d7c5ff; font-size: 1.15em; margin: 0 0 12px; }
+        .card h3 { color: #b8a9ff; font-size: 1em; margin: 20px 0 6px; }
+        .card p  { margin: 8px 0; }
+        .card ul { padding-left: 20px; margin: 8px 0; }
+        .card li { margin: 6px 0; }
+
+        /* 覚えるべきキーワードは黄色で目立たせる */
+        .key { color: #ffd479; font-weight: bold; }
+
+        /* パケットの流れ・計算例を書く等幅ボックス */
+        .box {
+            background: #0f1626;
+            border-left: 3px solid #8b7bff;
+            border-radius: 6px;
+            padding: 12px 14px;
+            margin: 12px 0;
+            font-family: monospace;
+            font-size: 0.86em;
+            line-height: 1.7;
+            color: #cfe3ff;
+            overflow-x: auto;   /* 横に長い図はスクロール */
+            white-space: pre;
+        }
+
+        /* 表(スマホでは横スクロールさせる) */
+        .table-wrap { overflow-x: auto; margin: 12px 0; }
+        table { border-collapse: collapse; width: 100%; font-size: 0.9em; }
+        th, td { border: 1px solid rgba(139,123,255,0.3); padding: 8px 10px; text-align: left; }
+        th { background: rgba(139,123,255,0.15); color: #d7c5ff; white-space: nowrap; }
+
+        /* 「ここ試験に出る」メモ */
+        .note {
+            background: rgba(139,123,255,0.10);
+            border: 1px dashed rgba(139,123,255,0.5);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 14px 0;
+            font-size: 0.94em;
+        }
+        .note b { color: #ffd479; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">ホーム</a>
+        <a href="/alternative">ALTERNATIVE</a>
+        <a href="/study">FE進捗</a>
+        <a href="/network">ネットワーク</a>
+    </nav>
+
+    <h1>ネットワーク用語まとめ</h1>
+    <p class="subtitle">NAT / NAPT / チェックサム ── 基本情報の頻出ポイント</p>
+
+    <!-- タブのボタン。押すと showTab(番号) が呼ばれる -->
+    <div class="tabs">
+        <button class="tab active" onclick="showTab(0)">NAT</button>
+        <button class="tab" onclick="showTab(1)">NAPT</button>
+        <button class="tab" onclick="showTab(2)">違いの比較</button>
+        <button class="tab" onclick="showTab(3)">チェックサム</button>
+    </div>
+
+    <!-- ============ パネル0:NAT ============ -->
+    <div class="panel active">
+        <div class="card">
+            <h2>NAT(Network Address Translation)</h2>
+            <p><span class="key">プライベートIPアドレスとグローバルIPアドレスを1対1で相互変換</span>する仕組み。
+               変換するのは<span class="key">IPアドレスだけ</span>。</p>
+
+            <h3>なぜ必要か</h3>
+            <ul>
+                <li>家や社内のLANでは、自由に使える<b>プライベートIPアドレス</b>を使っている</li>
+                <li>でもプライベートIPはインターネットにそのままでは出られない(途中のルータが捨てる)</li>
+                <li>そこで出口のルータが、外に出るときだけグローバルIPに着せ替えてやる = これがNAT</li>
+            </ul>
+
+            <div class="table-wrap">
+                <table>
+                    <tr><th>クラス</th><th>プライベートIPの範囲</th></tr>
+                    <tr><td>A</td><td>10.0.0.0 〜 10.255.255.255(10.0.0.0/8)</td></tr>
+                    <tr><td>B</td><td>172.16.0.0 〜 172.31.255.255(172.16.0.0/12)</td></tr>
+                    <tr><td>C</td><td>192.168.0.0 〜 192.168.255.255(192.168.0.0/16)</td></tr>
+                </table>
+            </div>
+
+            <h3>動き</h3>
+            <div class="box">行き)  PC 192.168.1.10  ──▶ [ルータ] ──▶  Web 93.184.216.34
+       送信元IPを書き換え:  192.168.1.10 → 203.0.113.5
+
+帰り)  Web 93.184.216.34 ──▶ [ルータ] ──▶  PC 192.168.1.10
+       宛先IPを書き換え:    203.0.113.5  → 192.168.1.10</div>
+
+            <p>ルータは「どの内部IPをどの外部IPに変換したか」を<b>変換表(NATテーブル)</b>に記録しておき、
+               戻ってきたパケットを元の相手に返します。</p>
+
+            <div class="table-wrap">
+                <table>
+                    <tr><th>内部IP</th><th>外部IP</th></tr>
+                    <tr><td>192.168.1.10</td><td>203.0.113.5</td></tr>
+                    <tr><td>192.168.1.11</td><td>203.0.113.6 ← もう1個必要</td></tr>
+                </table>
+            </div>
+
+            <h3>弱点</h3>
+            <p>アドレスしか覚えられないので、<span class="key">同時に外に出られるのはグローバルIPの数だけ</span>。
+               10台同時に繋ぎたければグローバルIPが10個いる。これでは全然アドレスの節約にならない。
+               → そこで登場するのが次のNAPT。</p>
+        </div>
+    </div>
+
+    <!-- ============ パネル1:NAPT ============ -->
+    <div class="panel">
+        <div class="card">
+            <h2>NAPT(Network Address Port Translation)</h2>
+            <p><span class="key">IPアドレスとポート番号をセットで変換</span>する仕組み。
+               グローバルIPが<span class="key">1個だけでも複数台が同時に</span>インターネットに出られる。</p>
+
+            <div class="note">
+                <b>別名に注意。</b>試験ではこれ全部おなじものとして出ます。<br>
+                NAPT = <b>IPマスカレード</b>(Linux) = <b>PAT</b>(Cisco) = <b>NATオーバーロード</b>
+            </div>
+
+            <h3>変換表にポート番号が入る</h3>
+            <p>2台が同時に同じサイト(93.184.216.34:80)を見た場合:</p>
+
+            <div class="table-wrap">
+                <table>
+                    <tr><th>内部 IP:ポート</th><th>外部 IP:ポート</th><th>宛先</th></tr>
+                    <tr><td>192.168.1.10:50001</td><td>203.0.113.5:<b>60001</b></td><td>93.184.216.34:80</td></tr>
+                    <tr><td>192.168.1.11:50001</td><td>203.0.113.5:<b>60002</b></td><td>93.184.216.34:80</td></tr>
+                </table>
+            </div>
+
+            <p>外から見ると2台とも同じ 203.0.113.5 だが、<b>ポート番号が違う</b>。
+               返ってきたパケットの宛先ポートが60001なら1台目、60002なら2台目 ── と一意に振り分けられる。</p>
+
+            <div class="box">行き)  192.168.1.10:50001  →(変換)→  203.0.113.5:60001
+帰り)  203.0.113.5:60001   →(逆変換)→ 192.168.1.10:50001</div>
+
+            <p>ポート番号は16bit = 65536通りあるので、理論上は<span class="key">グローバルIP1個で数万セッション</span>を
+               まかなえる。これが「NAPTはIPv4アドレス枯渇の延命策」と言われる理由。</p>
+
+            <h3>外から中への通信は原則できない</h3>
+            <p>変換表にエントリが無い状態で外から 203.0.113.5:80 宛てに来ても、
+               ルータはどのPCに渡せばいいか分からず<b>捨てる</b>。
+               中でサーバを公開したいときは<span class="key">ポートフォワーディング(静的NAPT)</span>で
+               「80番宛ては 192.168.1.20 へ」と手で登録しておく必要がある。</p>
+            <p>結果として外部からの不正アクセスが届きにくいという副次効果はあるが、
+               <b>ファイアウォールの代わりにはならない</b>。</p>
+
+            <h3>NAPTの弱点(応用問題で狙われる)</h3>
+            <ul>
+                <li><b>ポート番号を持たないプロトコル</b> … ICMPにはポートが無い。そこでEchoの
+                    <b>Identifier</b>フィールドをポート番号の代わりに使って識別する</li>
+                <li><b>ペイロードにIPアドレスを埋め込むプロトコル</b> … FTPのアクティブモード(PORTコマンド)やSIP。
+                    ヘッダだけ直しても中身にプライベートIPが残るので壊れる →
+                    <b>ALG</b>(Application Level Gateway)で中身まで書き換える必要がある</li>
+                <li><b>IPsecのAHが通らない</b> … AHはIPヘッダごと認証するため、書き換え = 改ざん扱いになる。
+                    ESPは<b>NAT-T</b>(UDP4500でカプセル化)で回避する</li>
+                <li><b>エンドツーエンド性の喪失</b> … P2P・オンラインゲーム・VoIPが繋がりにくい。
+                    STUN / TURN / UPnP といった穴あけ技術が要る</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============ パネル2:比較 ============ -->
+    <div class="panel">
+        <div class="card">
+            <h2>NAT と NAPT の違い</h2>
+
+            <div class="table-wrap">
+                <table>
+                    <tr><th>項目</th><th>NAT</th><th>NAPT</th></tr>
+                    <tr><td>変換するもの</td><td>IPアドレスのみ</td><td><b>IPアドレス + ポート番号</b></td></tr>
+                    <tr><td>対応関係</td><td>1 : 1</td><td><b>N : 1(多対一)</b></td></tr>
+                    <tr><td>必要なグローバルIP</td><td>同時接続する台数ぶん</td><td><b>1個でOK</b></td></tr>
+                    <tr><td>変換表の中身</td><td>内部IP ⇄ 外部IP</td><td>内部IP:ポート ⇄ 外部IP:ポート</td></tr>
+                    <tr><td>外→内の通信</td><td>静的NATなら可能</td><td>原則不可(ポート開放が必要)</td></tr>
+                    <tr><td>L4チェックサム</td><td>再計算が必要</td><td>再計算が必要</td></tr>
+                    <tr><td>別名</td><td>Basic NAT</td><td>IPマスカレード / PAT</td></tr>
+                </table>
+            </div>
+
+            <div class="note">
+                <b>覚え方。</b>NAT に <b>P</b> が増えた = <b>Port</b> が増えた。<br>
+                「NAT = アドレスだけ」「NAPT = アドレス + ポート」。ここさえ押さえれば大体解ける。
+            </div>
+
+            <h3>よく出る問題パターン</h3>
+            <ul>
+                <li>「1個のグローバルIPで複数台が<b>同時に</b>接続できるのはどれか」→ <b>NAPT</b></li>
+                <li>「NAPTが変換するものを2つ答えよ」→ <b>IPアドレスとポート番号</b></li>
+                <li>「IPマスカレードと同じものはどれか」→ <b>NAPT</b></li>
+                <li>「NAPTで、ポート番号を持たないICMPをどう識別するか」→ <b>Identifierフィールドを使う</b></li>
+            </ul>
+
+            <div class="note">
+                <b>おまけ:NPTv6。</b>IPv6には<b>NPTv6</b>(RFC 6296)という別物がある。
+                これはIPアドレスの<b>上位プレフィックスだけ</b>を1:1でステートレスに変換するもので、
+                ポート番号には触らない。目的もアドレス節約ではなく「ISPを変えても社内アドレスを変えなくて済む」こと。
+                FEの範囲外だが、NAPTと混同しないよう注意。
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ パネル3:チェックサム ============ -->
+    <div class="panel">
+        <div class="card">
+            <h2>TCP/UDP チェックサム</h2>
+            <p><span class="key">通信の途中でビットが化けていないかを検出する</span>ための数値。
+               送信側が計算してヘッダに入れ、受信側が同じ計算をして確かめる。</p>
+
+            <h3>計算方法(1の補数和)</h3>
+            <ul>
+                <li>① データを<b>16bitずつ</b>に区切る</li>
+                <li>② 全部を足す</li>
+                <li>③ 桁あふれ(キャリー)は捨てず<b>下位に足し戻す</b>(end-around carry)</li>
+                <li>④ 結果を<b>ビット反転</b>したものがチェックサム</li>
+            </ul>
+
+            <div class="box">送信側:
+  0xF0F0 + 0x1234 = 0x10324    ← 17bit目にあふれた
+  0x0324 + 0x1    = 0x0325     ← あふれた1を下位に足し戻す
+  ビット反転       = 0xFCDA     ← これがチェックサム
+
+受信側:
+  0xF0F0 + 0x1234 + 0xFCDA = 0xFFFF
+  → 全ビットが1になれば「壊れてない」</div>
+
+            <h3>計算範囲に「擬似ヘッダ」が入る</h3>
+            <p>計算対象はTCP/UDPヘッダとデータだけではなく、
+               <span class="key">IPヘッダから借りてきた擬似ヘッダ(pseudo header)</span>も含む。</p>
+
+            <div class="table-wrap">
+                <table>
+                    <tr><th>擬似ヘッダの中身</th><th>どこから来る</th></tr>
+                    <tr><td>送信元IPアドレス</td><td>IPヘッダ</td></tr>
+                    <tr><td>宛先IPアドレス</td><td>IPヘッダ</td></tr>
+                    <tr><td>プロトコル番号(TCP=6 / UDP=17)</td><td>IPヘッダ</td></tr>
+                    <tr><td>セグメント長</td><td>計算値</td></tr>
+                </table>
+            </div>
+
+            <p>なぜIPアドレスまで含めるかというと、
+               <b>アドレスが化けて別の相手に届いたパケットを受け取ってしまう事故を防ぐ</b>ため。
+               L4がL3の情報も一緒に検算している。</p>
+
+            <div class="note">
+                <b>ここがNAT/NAPTと繋がる。</b>
+                NATはIPアドレスを、NAPTはIPアドレス+ポート番号を書き換える。
+                どちらも<b>チェックサムの計算対象</b>なので、
+                NATルータは転送前に<b>TCP/UDPチェックサムを計算し直している</b>。
+                (IPヘッダのチェックサムも別途再計算が必要)
+            </div>
+
+            <h3>その他のおさえどころ</h3>
+            <ul>
+                <li><b>TCPは必須</b>。<b>UDPはIPv4では任意</b>(未使用なら0)だが、<b>IPv6では必須</b></li>
+                <li>誤りを<b>検出するだけで訂正はしない</b> → TCPは再送、UDPは破棄</li>
+                <li>16bitしかないので検出能力は弱い。だから下位層でイーサネットの<b>FCS(CRC-32)</b>が別途守っている</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // タブが押されたら実行:全部を一旦オフにして、選ばれた番号だけオンにする
+        function showTab(index) {
+            const tabs = document.querySelectorAll(".tab");     // タブ全部
+            const panels = document.querySelectorAll(".panel"); // パネル全部
+            // いったん全部から active を外す
+            tabs.forEach(t => t.classList.remove("active"));
+            panels.forEach(p => p.classList.remove("active"));
+            // 選ばれた番号だけ active を付ける
+            tabs[index].classList.add("active");
+            panels[index].classList.add("active");
+            // 次に来たとき同じタブを開けるように覚えておく
+            localStorage.setItem("net-tab", index);
+        }
+
+        // 【復元】前回開いていたタブがあれば、それを開いた状態で始める
+        const saved = Number(localStorage.getItem("net-tab"));
+        const tabCount = document.querySelectorAll(".tab").length;
+        // タブを減らした後などに変な値が残っていても落ちないよう、範囲内かを確かめる
+        if (saved >= 0 && saved < tabCount) {
+            showTab(saved);
+        }
+    </script>
+</body>
+</html>
