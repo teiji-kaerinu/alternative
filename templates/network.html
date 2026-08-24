@@ -90,9 +90,12 @@
 
         /* 表(スマホでは横スクロールさせる) */
         .table-wrap { overflow-x: auto; margin: 12px 0; }
-        table { border-collapse: collapse; width: 100%; font-size: 0.88em; }
+        /* 狭い画面では列が潰れて読めなくなるので、最低幅を確保して枠内で横スクロールさせる */
+        table { border-collapse: collapse; width: 100%; font-size: 0.88em; min-width: 26rem; }
         th, td { border: 1px solid rgba(139,123,255,0.3); padding: 7px 10px; text-align: left; }
         th { background: rgba(139,123,255,0.15); color: #d7c5ff; white-space: nowrap; }
+        /* 1列目は項目名なので折り返さない(スマホで1文字ずつ縦積みになるのを防ぐ) */
+        td:first-child { white-space: nowrap; }
 
         /* 「ここ試験に出る」メモ */
         .note {
