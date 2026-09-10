@@ -1,0 +1,18 @@
+{
+  // このプロジェクトで使うPythonを venv に固定する
+  // (これが無いとVSCodeが素のPythonを見て「Flaskが無い」と誤検知する)
+  "python.defaultInterpreterPath": "${workspaceFolder}\\venv\\Scripts\\python.exe",
+
+  // ターミナルを開いたとき自動で venv を有効化する
+  "python.terminal.activateEnvironment": true,
+
+  // Pythonファイルは保存時に black で自動整形する
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
+
+  // 余分な空白を保存時に掃除する
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true
+}

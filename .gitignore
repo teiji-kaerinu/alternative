@@ -6,7 +6,22 @@ __pycache__/
 venv/
 .venv/
 
-# OS / エディタ
+# ★秘密情報(SECRET_KEY / Cloudinaryのキーなど)
+# このリポジトリは公開なので、コミットすると全世界に漏れる。絶対に無視する。
+.env
+.env.*
+!.env.example
+
+# データベース(SQLite)。手元のデータなので共有しない
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# OS
 Thumbs.db
 .DS_Store
-.vscode/
+
+# エディタ設定(settings.json だけは共有して、家PC/会社PCの環境を揃える)
+.vscode/*
+!.vscode/settings.json
