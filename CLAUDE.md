@@ -60,10 +60,20 @@
 User   … id, username, password_hash
 
 Spot   … id, user_id, name, work(文字列), address,
-          lat, lng, scene_note, priority, is_visited, created_at
+          lat, lng（NULL可）, scene_note, priority, created_at
 
 Visit  … id, spot_id, visited_on, photo_url, memo, created_at
 ```
+
+### 設計判断（2026-09-10 決定）
+
+| 判断 | 内容 | 理由 |
+|---|---|---|
+| `is_visited` は**持たない** | 訪問済みかどうかは **Visit が1件以上あるか** で判定する | 同じ事実を2箇所で持つと「Visitを消したのにフラグがTrueのまま」という不整合が構造的に起きる。スポットは数十件なので結合の速度は問題にならない。遅くなったらその時に足す |
+| `lat` / `lng` は **NULL可** | 座標が空でもスポットを登録できる。地図(F5)は座標があるものだけプロットする | 座標を必須にすると「登録が面倒→登録しない→アプリが使われない」に直行する。「名前だけ先に登録→後で座標を足す」を許す。佐渡の圏外対策とも噛み合う |
+| 日時は **UTCで保存** | DBにはUTCで入れ、画面に出すときJSTへ変換する | 本番サーバー(Render等)はUTCで動く。JSTのつもりで保存すると本番でズレる。PythonAnywhereで `/time` がロンドン時間になったのと同じ罠 |
+
+**Visit に `user_id` は持たせない**（`Visit → Spot → User` でたどれるため冗長）。
 
 ### 画面（5枚）
 
