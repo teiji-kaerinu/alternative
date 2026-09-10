@@ -1,8 +1,21 @@
 # Flaskを読み込む(render_template=HTMLを返す, request=送られたデータを受け取る)
 from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
 
-# アプリ本体を作る
+
+class Base(DeclarativeBase):
+    pass
+
+
+db = SQLAlchemy(model_class=Base)
+
+
 app = Flask(__name__)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///alternative.db"
+# initialize the app with the extension
+db.init_app(app)
 
 
 # 「/」トップページ
