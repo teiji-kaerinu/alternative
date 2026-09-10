@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime, timezone
+from flask_migrate import Migrate
 
 
 class Base(DeclarativeBase):
@@ -18,6 +19,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///alternative.db"
 # initialize the app with the extension
 db.init_app(app)
+migrate = Migrate(app, db)
 
 
 class Spot(db.Model):
@@ -32,7 +34,6 @@ class Spot(db.Model):
     created_at: Mapped[datetime] = mapped_column(
         default=lambda: datetime.now(timezone.utc)
     )
-    # datetime.now(timezone.utc)
 
 
 # 「/」トップページ
