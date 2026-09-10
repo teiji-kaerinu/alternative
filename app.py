@@ -2,6 +2,8 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import Mapped, mapped_column
+from datetime import datetime, timezone
 
 
 class Base(DeclarativeBase):
@@ -16,6 +18,21 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///alternative.db"
 # initialize the app with the extension
 db.init_app(app)
+
+
+class Spot(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column()
+    work: Mapped[str] = mapped_column()
+    address: Mapped[str | None] = mapped_column()
+    lat: Mapped[float | None] = mapped_column()
+    lng: Mapped[float | None] = mapped_column()
+    scene_note: Mapped[str | None] = mapped_column()
+    priority: Mapped[int] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(
+        default=lambda: datetime.now(timezone.utc)
+    )
+    # datetime.now(timezone.utc)
 
 
 # 「/」トップページ

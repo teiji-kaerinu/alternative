@@ -65,6 +65,20 @@ Spot   … id, user_id, name, work(文字列), address,
 Visit  … id, spot_id, visited_on, photo_url, memo, created_at
 ```
 
+### テーブル定義書: Spot
+|列名|型|空OK|初期値|説明|
+|---|---|---|---|---|
+|id|int|×|自動連番|主キー自動連番IDサロゲートキー|
+|name|str|×||場所の名前|
+|work|str|×||作品名|
+|address|str|空OK||住所|
+|lat|float|空OK||住所の緯度|
+|lng|float|空OK||住所の経度|
+|scene_note|str|空OK||場所の説明|
+|priority|int|×||優先度|
+|created_at|datetime|×|保存した時刻（UTC）|自動入力|
+
+
 ### 設計判断（2026-09-10 決定）
 
 | 判断 | 内容 | 理由 |
