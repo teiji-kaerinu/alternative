@@ -118,6 +118,7 @@ Visit  … id, spot_id, visited_on, photo_url, memo, created_at
 基本情報技術者試験は **2026/12/06（日）受験予定**。これが12月を圧迫するので、
 **開発の山場は11月に前倒しする。**
 FEの学習計画は `docs/fe-study-plan.md`。
+基礎理論（基数変換・論理演算）の要点は `docs/fe-kiso.md`。
 
 | 時期 | ゴール |
 |---|---|
