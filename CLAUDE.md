@@ -119,6 +119,9 @@ Visit  … id, spot_id, visited_on, photo_url, memo, created_at
 **開発の山場は11月に前倒しする。**
 FEの学習計画は `docs/fe-study-plan.md`。
 基礎理論（基数変換・論理演算）の要点は `docs/fe-kiso.md`。
+**科目Aのカリキュラムと進捗管理は「FE作戦手帳」が正典**
+（https://claude.ai/code/artifact/fc236bdd-f90a-400d-87e5-cd28d5850ae1 ／ 別セッション作成）。
+`docs/fe-study-plan.md` は科目Bの型・鉄則・失点分析を担当する。二重管理で齟齬を出さないこと。
 
 | 時期 | ゴール |
 |---|---|
