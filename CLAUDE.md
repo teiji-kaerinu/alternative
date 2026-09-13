@@ -123,6 +123,12 @@ FEの学習計画は `docs/fe-study-plan.md`。
 （https://claude.ai/code/artifact/fc236bdd-f90a-400d-87e5-cd28d5850ae1 ／ 別セッション作成）。
 `docs/fe-study-plan.md` は科目Bの型・鉄則・失点分析を担当する。二重管理で齟齬を出さないこと。
 
+**HTML/CSSの習得計画は `docs/html-css-plan.md`。**
+日程と進捗チェックは「HTML/CSS 作戦要図」が正典
+（https://claude.ai/code/artifact/91b5f45a-bc9a-4ce5-be11-0b4fb1886c5b）。
+mdは「なぜこの量で止めるのか」の判断を担当する。同じくガントの日付をmdに書き写さない。
+**座学は9/14〜9/20の7日のみ、合計12〜15時間で打ち止め。10/25以降は新しい教材を開かない。**
+
 | 時期 | ゴール |
 |---|---|
 | 9/21〜10/4 | 免許合宿。**開発は停止** |
