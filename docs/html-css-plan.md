@@ -89,7 +89,43 @@ scene_note / priority）がそのまま入力項目になるので、ここで�
 
 ---
 
+## 合宿明け（10/5）にやる環境整備
+
+### Prettier を入れる
+
+HTML / CSS / JS を保存時に自動整形する VS Code 拡張。
+Python 側で black がやっていることを、HTML/CSS/JS でもやる。
+
+**なぜ入れるか：** インデントが強制的に揃うので、**入れ子の深さが目で見える**ようになる。
+構造を読む・書く練習にそのまま効く。手でスペースを数える作業が消える。
+
+**手順：**
+
+1. VS Code の拡張で `Prettier - Code formatter`（`esbenp.prettier-vscode`）を入れる
+2. `.vscode/settings.json` に追記する：
+
+```json
+"[html]":       { "editor.defaultFormatter": "esbenp.prettier-vscode", "editor.formatOnSave": true },
+"[css]":        { "editor.defaultFormatter": "esbenp.prettier-vscode", "editor.formatOnSave": true },
+"[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode", "editor.formatOnSave": true }
+```
+
+Python は **black のまま**にする（Prettier は Python を扱わない）。
+既存の `"[python]"` の設定はいじらない。
+
+**踏むであろう地雷：** Prettier は Jinja2 のテンプレート構文（`{% %}` / `{{ }}`）を
+正しく整形できないことがある。10/26 以降 `templates/` が Jinja2 まみれになると崩れる可能性がある。
+
+- 崩れたら、プロジェクト直下に `.prettierignore` を作って `templates/` と書いて除外する
+- 一部だけ守りたいときは、その要素の直前に `<!-- prettier-ignore -->`（**直後の1要素だけ**効く）
+
+**これは環境整備であって学習ではない。** 10分で終わらせる。
+うまく動かなかったら深追いせず、無しで進める（無くても困らない）。
+
+---
+
 ## 履歴
 
 - 2026-09-13：計画を策定。作戦要図（ガント）との正典分担を決定。
   合計12〜15時間・座学は9/14〜9/20の7日のみ、と上限を確定した。
+- 2026-09-19：合宿明け(10/5)にやる環境整備として Prettier の導入手順を追加。
