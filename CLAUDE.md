@@ -122,6 +122,11 @@ FEの学習計画は `docs/fe-study-plan.md`。
 **科目Aのカリキュラムと進捗管理は「FE作戦手帳」が正典**
 （https://claude.ai/code/artifact/fc236bdd-f90a-400d-87e5-cd28d5850ae1 ／ 別セッション作成）。
 `docs/fe-study-plan.md` は科目Bの型・鉄則・失点分析を担当する。二重管理で齟齬を出さないこと。
+**失点台帳と一問一答ドリルは「踏んだ罠」が正典**
+（https://claude.ai/artifact/WSQQkvievC6GMowirXGxxz）。
+「いつ・何を・なぜ落としたか」と、スマホで回すドリルだけを持つ。
+**説明はここに書き写さない。** 長い説明は `fe-kiso.md` / `fe-study-plan.md` のまま。
+落とした問題が出たら、mdに要点を書いて、台帳に1行足す。この順番を崩さない。
 
 **HTML/CSSの習得計画は `docs/html-css-plan.md`。**
 日程と進捗チェックは「HTML/CSS 作戦要図」が正典
