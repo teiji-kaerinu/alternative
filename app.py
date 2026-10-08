@@ -48,6 +48,13 @@ def gallery():
     return render_template("gallery.html")
 
 
+# 「/spots」: スポットを並べて表示する
+@app.route("/spots")
+def spots():
+    spots = db.session.execute(db.select(Spot)).scalars()
+    return render_template("spots.html", spots=spots)
+
+
 # 「/works」: 作品を文章つき・タブ切り替えで紹介する
 @app.route("/works")
 def works():
