@@ -92,6 +92,12 @@ Visit  … id, spot_id, visited_on, photo_url, memo, created_at
 |priority|int|×||優先度|
 |created_at|datetime|×|保存した時刻（UTC）|自動入力|
 
+### テーブル定義書: User
+|列名|型|空OK|初期値|説明|
+|---|---|---|---|---|
+|id|int|×|自動連番|主キー自動連番IDサロゲートキー|
+|username|str|×||重複禁止|
+|password_hash|str|×||パスワードをハッシュ関数に通した結果。元のパスワードは保存しない|
 
 ### 設計判断（2026-09-10 決定）
 
