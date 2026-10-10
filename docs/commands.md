@@ -36,6 +36,11 @@ db.session.rollback()             # commitでエラーが出たら、まずこ�
 exit()                            # shellから出る
 ```
 
+```python
+from werkzeug.security import generate_password_hash,check_password_hash
+                                  #ハッシュ関数に通すため、暗号化複合化のimport
+```
+
 ## DBの形を変える（モデルを書き換えたとき）
 
 いつもこの順番。**migrateとupgradeの間に、生成されたファイルを必ず読む。**
