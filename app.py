@@ -17,6 +17,8 @@ db = SQLAlchemy(model_class=Base)
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///alternative.db"
+app.config.from_prefixed_env()
+
 # initialize the app with the extension
 db.init_app(app)
 migrate = Migrate(app, db)
