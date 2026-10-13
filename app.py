@@ -5,6 +5,9 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime, timezone
 from flask_migrate import Migrate
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired
 
 
 class Base(DeclarativeBase):
@@ -44,6 +47,12 @@ class User(db.Model):
     password_hash: Mapped[str] = mapped_column()
 
 
+class RegisterForm(FlaskForm):
+    username = StringField("ユーザー名", validators=[DataRequired()])
+    password = PasswordField("パスワード", validators=[DataRequired()])
+    submit_button = SubmitField("登録")
+
+
 # 「/」トップページ
 @app.route("/")
 def home():
@@ -61,6 +70,14 @@ def gallery():
 def spots():
     spots = db.session.execute(db.select(Spot)).scalars()
     return render_template("spots.html", spots=spots)
+
+
+# 　「/register」:　登録画面の表示
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegisterForm()
+    return render_template("register.html", form=form)
+    # print(form)
 
 
 # 「/works」: 作品を文章つき・タブ切り替えで紹介する
