@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from flask_migrate import Migrate
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, ValidationError
 from werkzeug.security import generate_password_hash
 
 
@@ -52,6 +52,12 @@ class RegisterForm(FlaskForm):
     username = StringField("ユーザー名", validators=[DataRequired()])
     password = PasswordField("パスワード", validators=[DataRequired()])
     submit_button = SubmitField("登録")
+
+    def validate_username(self, field):
+        stmt = db.select(User).filter_by(username=field.data)
+        user = db.session.execute(stmt).scalar()
+        if user != None:
+            raise ValidationError("この名前はもう使われています")
 
 
 # 「/」トップページ

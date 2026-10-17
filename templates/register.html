@@ -11,6 +11,14 @@
     {{form.username.label}}{{form.username()}}
     {{form.password.label}}{{form.password()}}
     {{ form.submit_button()}}
+
+    {% if form.username.errors %}
+    <ul class="errors">
+    {% for error in form.username.errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
   </form>
 </body>
 </html>
