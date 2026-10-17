@@ -6,10 +6,11 @@
   <title>ALTERNATIVE</title>
 </head>
 <body>
-  <form method="POST" action="/">
+  <form method="POST">
     {{form.csrf_token}}
     {{form.username.label}}{{form.username()}}
     {{form.password.label}}{{form.password()}}
     {{ form.submit_button()}}
+  </form>
 </body>
 </html>

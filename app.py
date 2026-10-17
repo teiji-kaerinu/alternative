@@ -1,5 +1,5 @@
 # Flaskを読み込む(render_template=HTMLを返す, request=送られたデータを受け取る)
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, mapped_column
@@ -8,6 +8,7 @@ from flask_migrate import Migrate
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
+from werkzeug.security import generate_password_hash
 
 
 class Base(DeclarativeBase):
@@ -76,6 +77,14 @@ def spots():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        password_hash = generate_password_hash(password)
+        user = User(username=username, password_hash=password_hash)
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for("spots"))
     return render_template("register.html", form=form)
     # print(form)
 
