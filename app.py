@@ -9,6 +9,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
 from werkzeug.security import generate_password_hash
+from flask_login import LoginManager, UserMixin
 
 
 class Base(DeclarativeBase):
@@ -17,8 +18,10 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 
+login_manager = LoginManager()
 
 app = Flask(__name__)
+login_manager.init_app(app)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///alternative.db"
 app.config.from_prefixed_env()
@@ -42,10 +45,15 @@ class Spot(db.Model):
     )
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True)
     password_hash: Mapped[str] = mapped_column()
+
+
+@login_manager.user_loader
+def user_loader(user_id):
+    return db.session.get(User, int(user_id))
 
 
 class RegisterForm(FlaskForm):
