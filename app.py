@@ -8,8 +8,8 @@ from flask_migrate import Migrate
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
-from werkzeug.security import generate_password_hash
-from flask_login import LoginManager, UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user
 
 
 class Base(DeclarativeBase):
@@ -68,6 +68,12 @@ class RegisterForm(FlaskForm):
             raise ValidationError("この名前はもう使われています")
 
 
+class LoginForm(FlaskForm):
+    username = StringField("ユーザー名", validators=[DataRequired()])
+    password = PasswordField("パスワード", validators=[DataRequired()])
+    submit_button = SubmitField("ログイン")
+
+
 # 「/」トップページ
 @app.route("/")
 def home():
@@ -100,7 +106,21 @@ def register():
         db.session.commit()
         return redirect(url_for("spots"))
     return render_template("register.html", form=form)
-    # print(form)
+
+
+# 　「/login」:　ログイン画面の表示
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        seeking = db.select(User).filter_by(username=username)
+        user = db.session.execute(seeking).scalar()
+        if user != None and check_password_hash(user.password_hash, password):
+            login_user(user)
+            return redirect(url_for("spots"))
+    return render_template("login.html", form=form)
 
 
 # 「/works」: 作品を文章つき・タブ切り替えで紹介する
