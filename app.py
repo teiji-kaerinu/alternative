@@ -9,7 +9,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, UserMixin, login_user
+from flask_login import LoginManager, UserMixin, login_user, logout_user
 
 
 class Base(DeclarativeBase):
@@ -121,6 +121,12 @@ def login():
             login_user(user)
             return redirect(url_for("spots"))
     return render_template("login.html", form=form)
+
+
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
 
 
 # 「/works」: 作品を文章つき・タブ切り替えで紹介する

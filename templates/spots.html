@@ -9,12 +9,18 @@
 
 <body>
   <h1>ALTERNATIVE</h1>
-  <ul>
-  {% for spot in spots %}
-    <li>{{spot.name}}</li>
-    <li>{{spot.work}}</li>
-  {% endfor %}
-  </ul>
+  {% if current_user.is_authenticated %}
+  ログイン中の人の名前{{current_user.username}}
+    <ul>
+    {% for spot in spots %}
+      <li>{{spot.name}}</li>
+      <li>{{spot.work}}</li>
+    {% endfor %}
+    </ul>
+
+  {% else %}
+  「ログインしていません」
+  {% endif %}
 </body>
 
 </html>
