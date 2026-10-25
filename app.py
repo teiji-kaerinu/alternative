@@ -10,7 +10,14 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
+from flask_login import (
+    LoginManager,
+    UserMixin,
+    login_user,
+    logout_user,
+    login_required,
+    current_user,
+)
 
 
 class Base(DeclarativeBase):
@@ -93,7 +100,9 @@ def gallery():
 @app.route("/spots")
 @login_required
 def spots():
-    spots = db.session.execute(db.select(Spot)).scalars()
+    spots = db.session.execute(
+        db.select(Spot).filter_by(user_id=current_user.id)
+    ).scalars()
     return render_template("spots.html", spots=spots)
 
 
