@@ -83,6 +83,7 @@ Visit  … id, spot_id, visited_on, photo_url, memo, created_at
 |列名|型|空OK|初期値|説明|
 |---|---|---|---|---|
 |id|int|×|自動連番|主キー自動連番IDサロゲートキー|
+|user_id|int|×||外部キー(user.id)。このスポットを登録したユーザー|
 |name|str|×||場所の名前|
 |work|str|×||作品名|
 |address|str|空OK||住所|
