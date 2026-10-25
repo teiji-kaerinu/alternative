@@ -1,6 +1,7 @@
 # Flaskを読み込む(render_template=HTMLを返す, request=送られたデータを受け取る)
 from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime, timezone
@@ -34,6 +35,7 @@ migrate = Migrate(app, db)
 
 class Spot(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     name: Mapped[str] = mapped_column()
     work: Mapped[str] = mapped_column()
     address: Mapped[str | None] = mapped_column()
