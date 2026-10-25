@@ -90,7 +90,7 @@ Visit  … id, spot_id, visited_on, photo_url, memo, created_at
 |lat|float|空OK||住所の緯度|
 |lng|float|空OK||住所の経度|
 |scene_note|str|空OK||場所の説明|
-|priority|int|×||優先度|
+|priority|int|×||優先度(数字が小さいほど優先)|
 |created_at|datetime|×|保存した時刻（UTC）|自動入力|
 
 ### テーブル定義書: User
