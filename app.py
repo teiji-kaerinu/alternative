@@ -78,6 +78,18 @@ class RegisterForm(FlaskForm):
             raise ValidationError("この名前はもう使われています")
 
 
+class SpotForm(FlaskForm):
+    username = StringField("ユーザー名", validators=[DataRequired()])
+    password = PasswordField("パスワード", validators=[DataRequired()])
+    submit_button = SubmitField("登録")
+
+    def validate_username(self, field):
+        stmt = db.select(User).filter_by(username=field.data)
+        user = db.session.execute(stmt).scalar()
+        if user != None:
+            raise ValidationError("この名前はもう使われています")
+
+
 class LoginForm(FlaskForm):
     username = StringField("ユーザー名", validators=[DataRequired()])
     password = PasswordField("パスワード", validators=[DataRequired()])
@@ -117,6 +129,7 @@ def register():
         user = User(username=username, password_hash=password_hash)
         db.session.add(user)
         db.session.commit()
+        login_user(user)
         return redirect(url_for("spots"))
     return render_template("register.html", form=form)
 

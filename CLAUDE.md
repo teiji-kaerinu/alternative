@@ -100,6 +100,7 @@ Visit  … id, spot_id, visited_on, photo_url, memo, created_at
 |username|str|×||重複禁止|
 |password_hash|str|×||パスワードをハッシュ関数に通した結果。元のパスワードは保存しない|
 
+
 ### 設計判断（2026-09-10 決定）
 
 | 判断 | 内容 | 理由 |
