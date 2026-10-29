@@ -7,8 +7,15 @@ from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime, timezone
 from flask_migrate import Migrate
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms import (
+    StringField,
+    PasswordField,
+    SubmitField,
+    FloatField,
+    IntegerField,
+    TextAreaField,
+)
+from wtforms.validators import DataRequired, ValidationError, Optional
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import (
     LoginManager,
@@ -18,6 +25,7 @@ from flask_login import (
     login_required,
     current_user,
 )
+from wtforms.validators import Optional
 
 
 class Base(DeclarativeBase):
@@ -79,15 +87,14 @@ class RegisterForm(FlaskForm):
 
 
 class SpotForm(FlaskForm):
-    username = StringField("ユーザー名", validators=[DataRequired()])
-    password = PasswordField("パスワード", validators=[DataRequired()])
+    name = StringField("場所の名前", validators=[DataRequired()])
+    work = StringField("作品名", validators=[DataRequired()])
+    address = StringField("住所", validators=[Optional()])
+    lat = FloatField("緯度", validators=[Optional()])
+    lng = FloatField("経度", validators=[Optional()])
+    scene_note = TextAreaField("シーンメモ", validators=[Optional()])
+    priority = IntegerField("優先度", validators=[DataRequired()])
     submit_button = SubmitField("登録")
-
-    def validate_username(self, field):
-        stmt = db.select(User).filter_by(username=field.data)
-        user = db.session.execute(stmt).scalar()
-        if user != None:
-            raise ValidationError("この名前はもう使われています")
 
 
 class LoginForm(FlaskForm):
@@ -132,6 +139,35 @@ def register():
         login_user(user)
         return redirect(url_for("spots"))
     return render_template("register.html", form=form)
+
+
+# 　「/spots_register」:　スポット登録画面の表示
+@app.route("/spots_register", methods=["GET", "POST"])
+@login_required
+def spot_register():
+    form = SpotForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        work = form.work.data
+        address = form.address.data
+        lat = form.lat.data
+        lng = form.lng.data
+        scene_note = form.scene_note.data
+        priority = form.priority.data
+        spot = Spot(
+            user_id=current_user.id,
+            name=name,
+            work=work,
+            address=address,
+            lat=lat,
+            lng=lng,
+            scene_note=scene_note,
+            priority=priority,
+        )
+        db.session.add(spot)
+        db.session.commit()
+        return redirect(url_for("spots"))
+    return render_template("spots_register.html", form=form)
 
 
 # 　「/login」:　ログイン画面の表示
