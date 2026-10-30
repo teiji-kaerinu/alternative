@@ -13,13 +13,7 @@
   ログイン中の人の名前{{current_user.username}}
     <ul>
     {% for spot in spots %}
-      <li>{{spot.name}}</li>
-      <li>{{spot.work}}</li>
-      <li>{{spot.address}}</li>
-      <li>{{spot.lat}}</li>
-      <li>{{spot.lng}}</li>
-      <li>{{spot.scene_note}}</li>
-      <li>{{spot.priority}}</li>
+      <li><a href="/spots/{{spot.id}}">{{spot.name}}</a></li>
     {% endfor %}
     </ul>
 

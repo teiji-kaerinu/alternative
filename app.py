@@ -1,5 +1,5 @@
 # Flaskを読み込む(render_template=HTMLを返す, request=送られたデータを受け取る)
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase
@@ -25,7 +25,7 @@ from flask_login import (
     login_required,
     current_user,
 )
-from wtforms.validators import Optional
+from markupsafe import escape
 
 
 class Base(DeclarativeBase):
@@ -123,6 +123,19 @@ def spots():
         db.select(Spot).filter_by(user_id=current_user.id)
     ).scalars()
     return render_template("spots.html", spots=spots)
+
+
+# 「/spots/<spot_id>」: スポットの詳細を表示する
+@app.route("/spots/<int:spot_id>")
+@login_required
+def spots_id(spot_id):
+    spot = db.session.execute(
+        db.select(Spot).filter_by(user_id=current_user.id, id=spot_id)
+    ).scalar()
+    if spot == None:
+        abort(404)
+
+    return render_template("spots_detail.html", spot=spot)
 
 
 # 　「/register」:　登録画面の表示
