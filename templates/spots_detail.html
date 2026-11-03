@@ -9,7 +9,6 @@
 
 <body>
   <h1>ALTERNATIVE</h1>
-  {% if current_user.is_authenticated%}
   ログイン中の人の名前{{current_user.username}}
     <ul>
       <li>{{spot.name}}</li>
@@ -29,9 +28,7 @@
       <li>{{spot.priority}}</li>
     </ul>
 
-  {% else %}
-  「ログインしていません」
-  {% endif %}
+
 </body>
 
 </html>
