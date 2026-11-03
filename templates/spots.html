@@ -12,7 +12,7 @@
   ログイン中の人の名前{{current_user.username}}
     <ul>
     {% for spot in spots %}
-      <li><a href="{{url_for('spots_id', spot_id=spot.id)}}>{{spot.name}}</a></li>
+      <li><a href="{{url_for('spots_id', spot_id=spot.id)}}">{{spot.name}}</a></li>
     {% endfor %}
     </ul>
 </body>
