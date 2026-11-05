@@ -1,0 +1,16 @@
+body{
+    background-color:#0c0c48;
+    background-image:
+        linear-gradient(rgba(42,176,195,0.15)1px,transparent 1px),
+        linear-gradient(90deg,rgba(42,176,195,0.15)1px,transparent 1px);
+        background-size: 32px 32px;
+    color:#2ab0c3;
+}
+.panel{
+    border: 1px solid #2ab0c3;
+    box-shadow:  0 0 8px rgba(42,176,195,0.5);
+    padding:16px;
+}
+a {
+  color: #4d8dff;
+}

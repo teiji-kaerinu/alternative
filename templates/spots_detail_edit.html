@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ALTERNATIVE</title>
+  <link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+</head>
+
+<body>
+  <h1>ALTERNATIVE</h1>
+  ログイン中の人の名前編集画面やで{{current_user.username}}
+    <form method="POST">
+    {{form.csrf_token}}
+    {{form.name.label}}{{form.name()}}
+    {{form.work.label}}{{form.work()}}
+    {{form.address.label}}{{form.address()}}
+    {{form.lat.label}}{{form.lat()}}
+    {{form.lng.label}}{{form.lng()}}
+    {{form.scene_note.label}}{{form.scene_note()}}
+    {{form.priority.label}}{{form.priority()}}
+    {{ form.submit_button()}}
+
+  </form>
+
+
+</body>
+
+</html>

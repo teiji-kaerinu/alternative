@@ -131,10 +131,33 @@ def spots_id(spot_id):
     spot = db.session.execute(
         db.select(Spot).filter_by(user_id=current_user.id, id=spot_id)
     ).scalar()
-    if spot == None:
+    if spot is None:
         abort(404)
-
     return render_template("spots_detail.html", spot=spot)
+
+
+# 「/spots/<spot_id>/edit」: スポットの詳細を編集する
+@app.route("/spots/<int:spot_id>/edit", methods=["GET", "POST"])
+@login_required
+def spots_id_edit(spot_id):
+    spot = db.session.execute(
+        db.select(Spot).filter_by(user_id=current_user.id, id=spot_id)
+    ).scalar()
+    if spot is None:
+        abort(404)
+    form = SpotForm(obj=spot)
+
+    if form.validate_on_submit():
+        spot.name = form.name.data
+        spot.work = form.work.data
+        spot.address = form.address.data
+        spot.lat = form.lat.data
+        spot.lng = form.lng.data
+        spot.scene_note = form.scene_note.data
+        spot.priority = form.priority.data
+        db.session.commit()
+        return redirect(url_for("spots_id", spot_id=spot.id))
+    return render_template("spots_detail_edit.html", spot=spot, form=form)
 
 
 # 　「/register」:　登録画面の表示

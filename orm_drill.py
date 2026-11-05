@@ -209,9 +209,25 @@ def q7():
     返すもの: ["真野湾", "両津港", ...] のようなリスト
     箱を取り出して、for で1件ずつ names に足す
     """
+
+    stmt = db.select(Spot).filter_by(user_id=1)
+    print("① 注文票:", stmt)
+
+    result = db.session.execute(stmt)
+    print("② 実行結果:", result)
+
+    spot = result.scalars()
+    print("③ 取り出した:", spot)
     names = []
-    # names.append(○○) で1つ足せる
-    return MADA
+    # names.append(spot.name)
+
+    # names = list(spot.names)
+    # name = names[0]
+    for MUV in spot:
+        names.append(MUV.name)
+        print(MUV.name)
+
+    return names
 
 
 def q8(user_id, spot_id):
@@ -220,7 +236,16 @@ def q8(user_id, spot_id):
     SQL: SELECT * FROM spot WHERE user_id = (引数user_id) AND id = (引数spot_id)
     返すもの: 見つかれば本体、無ければ None
     """
-    return MADA
+    stmt = db.select(Spot).filter_by(user_id=user_id, id=spot_id)
+    print("① 注文票:", stmt)
+
+    result = db.session.execute(stmt)
+    print("② 実行結果:", result)
+
+    spot = result.scalar()
+    print("③ 取り出した:", spot)
+
+    return spot
 
 
 # 第3部 書く: SQL を Flask に訳す ---------------------------------------------
@@ -233,7 +258,15 @@ def q9():
          VALUES (1, '加茂湖', 'オルタネイティヴ', 3)
     返すもの: 無し(return MADA を消すだけ)
     """
-    return MADA
+
+    spot = Spot(
+        user_id=1,
+        name="加茂湖",
+        work="オルタネイティヴ",
+        priority=3,
+    )
+    db.session.add(spot)
+    db.session.commit()
 
 
 def q10():
@@ -243,7 +276,16 @@ def q10():
     手順: id=3 を本体で取り出す → spot.name に新しい名前を入れる → commit
     返すもの: 無し
     """
-    return MADA
+    stmt = db.select(Spot).filter_by(id=3)
+    print("① 注文票:", stmt)
+
+    result = db.session.execute(stmt)
+    print("② 実行結果:", result)
+
+    spot = result.scalar()
+    print("③ 取り出した:", spot)
+    spot.name = "校舎裏の丘"
+    db.session.commit()
 
 
 def q11():
