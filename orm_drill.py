@@ -295,7 +295,16 @@ def q11():
     手順: id=4 を本体で取り出す → db.session.delete(spot) → commit
     返すもの: 無し
     """
-    return MADA
+    stmt = db.select(Spot).filter_by(id=4)
+    print("① 注文票:", stmt)
+
+    result = db.session.execute(stmt)
+    print("② 実行結果:", result)
+
+    spot = result.scalar()
+
+    db.session.delete(spot)
+    db.session.commit()
 
 
 # 第4部 逆翻訳: Flask を SQL に訳す -------------------------------------------

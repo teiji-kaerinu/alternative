@@ -27,7 +27,11 @@
         <li>{{spot.scene_note}}</li>
       {% endif %}
       <li>{{spot.priority}}</li>
-      <li><a href="{{url_for('spots_id_edit', spot_id=spot.id)}}">{{編集}}</a></li>
+      <li><a href="{{url_for('spots_id_edit', spot_id=spot.id)}}">編集</a></li>
+      <form action="{{url_for('spots_id_delete', spot_id=spot.id)}}" method="POST">
+      {{delete.csrf_token}}
+      <li>{{delete.delete_button()}}</li>
+      </form>
     </ul>
 
 

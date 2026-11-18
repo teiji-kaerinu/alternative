@@ -102,6 +102,10 @@ class LoginForm(FlaskForm):
     submit_button = SubmitField("ログイン")
 
 
+class SpotDelete(FlaskForm):
+    delete_button = SubmitField("削除")
+
+
 # 「/」トップページ
 @app.route("/")
 def home():
@@ -125,7 +129,7 @@ def spots():
 
 
 # 「/spots/<spot_id>」: スポットの詳細を表示する
-@app.route("/spots/<int:spot_id>")
+@app.route("/spots/<int:spot_id>", methods=["GET", "POST"])
 @login_required
 def spots_id(spot_id):
     spot = db.session.execute(
@@ -133,7 +137,13 @@ def spots_id(spot_id):
     ).scalar()
     if spot is None:
         abort(404)
-    return render_template("spots_detail.html", spot=spot)
+    delete = SpotDelete()
+    print("送信された？", delete.is_submitted())
+
+    if delete.validate_on_submit():
+        return redirect(url_for("spots_id_delete", spot_id=spot.id))
+        Sprint("フォームのエラー:", delete.errors)
+    return render_template("spot_detail.html", spot=spot, delete=delete)
 
 
 # 「/spots/<spot_id>/edit」: スポットの詳細を編集する
@@ -157,7 +167,27 @@ def spots_id_edit(spot_id):
         spot.priority = form.priority.data
         db.session.commit()
         return redirect(url_for("spots_id", spot_id=spot.id))
-    return render_template("spots_detail_edit.html", spot=spot, form=form)
+    return render_template("spot_edit.html", spot=spot, form=form)
+
+
+# 「/spots/<spot_id>/delete」: スポット後と削除する
+@app.route("/spots/<int:spot_id>/delete", methods=["POST"])
+@login_required
+def spots_id_delete(spot_id):
+    spot = db.session.execute(
+        db.select(Spot).filter_by(user_id=current_user.id, id=spot_id)
+    ).scalar()
+    if spot is None:
+        abort(404)
+
+    print(spot)
+    delete2 = SpotDelete()
+    print("送信された？", delete2.is_submitted())
+    if delete2.validate_on_submit():
+        db.session.delete(spot)
+        db.session.commit()
+        print("フォームのエラー:", delete2.errors)
+        return redirect(url_for("spots"))
 
 
 # 　「/register」:　登録画面の表示
@@ -202,7 +232,7 @@ def spot_register():
         db.session.add(spot)
         db.session.commit()
         return redirect(url_for("spots"))
-    return render_template("spots_register.html", form=form)
+    return render_template("spot_register.html", form=form)
 
 
 # 　「/login」:　ログイン画面の表示
