@@ -14,6 +14,7 @@ from wtforms import (
     FloatField,
     IntegerField,
     TextAreaField,
+    SelectField,
 )
 from wtforms.validators import DataRequired, ValidationError, Optional
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -85,9 +86,16 @@ class RegisterForm(FlaskForm):
             raise ValidationError("この名前はもう使われています")
 
 
+WORKS = [
+    "マブラヴオルタネイティヴ",
+    "WAR ENSEMBLE",
+    "トータル・イクリプス",
+]  # 作品の一覧（中身はお前が並べる）
+
+
 class SpotForm(FlaskForm):
     name = StringField("場所の名前", validators=[DataRequired()])
-    work = StringField("作品名", validators=[DataRequired()])
+    work = SelectField("作品名", choices=WORKS, validators=[DataRequired()])
     address = StringField("住所", validators=[Optional()])
     lat = FloatField("緯度", validators=[Optional()])
     lng = FloatField("経度", validators=[Optional()])
